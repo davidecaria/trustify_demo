@@ -1,9 +1,6 @@
 
 class Passkey {
-  final string serviceID;
-  final string serviceUsername;
-  final
-
-
-
+  final String serviceID;
+  final String serviceUsername;
+  //end-to-end key
 }
