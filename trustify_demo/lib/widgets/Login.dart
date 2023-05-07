@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 500.0),
                   ElevatedButton(
                     onPressed: () async {
                       bool authenticated = await _authenticate();
