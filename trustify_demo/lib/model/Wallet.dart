@@ -7,12 +7,12 @@ import '../utils/crypto.dart';
 
 
 class Wallet {
-  //public key-pair
+  //singleton instantiation
   static final Wallet _instance = Wallet._internal();
-
   RSAPublicKey? walletPublicKey;
   RSAPrivateKey? walletPrivateKey;
 
+  //default values
   Wallet._internal() {
     walletPublicKey = null;
     walletPrivateKey = null;
@@ -23,19 +23,23 @@ class Wallet {
   }
 
   initialize() {
-    AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> walletPair = generateRSAkeyPair(getSecureRandom());
+    AsymmetricKeyPair<RSAPublicKey,
+        RSAPrivateKey> walletPair = generateRSAkeyPair(getSecureRandom());
     walletPublicKey = walletPair.publicKey;
     walletPrivateKey = walletPair.privateKey;
   }
 
   Future<void> storeWalletKeyPair() async {
-    await storeKeyPair("wallet_public_key", walletPublicKey!, "wallet_private_key", walletPrivateKey!);
+    await storeKeyPair(
+        "wallet_public_key", walletPublicKey!, "wallet_private_key",
+        walletPrivateKey!);
   }
 
   Future<bool> readWalletKeyPair() async {
-    List<String?> walletKeyPair = await readKeyPair("wallet_public_key", "wallet_private_key");
+    List<String?> walletKeyPair = await readKeyPair(
+        "wallet_public_key", "wallet_private_key");
 
-    if(walletKeyPair[0] == null || walletKeyPair[1] == null) {
+    if (walletKeyPair[0] == null || walletKeyPair[1] == null) {
       return false;
     }
     final pubKey = RSAKeyParser().parse(walletKeyPair[0]!) as RSAPublicKey;
@@ -45,7 +49,21 @@ class Wallet {
     walletPrivateKey = privKey;
 
     return true;
-
   }
 
+  String walletEncrypt(String plaintext) {
+    return encrypt(plaintext, walletPublicKey!);
+  }
+
+  String walletDecrypt(String ciphertext) {
+    return decrypt(ciphertext, walletPrivateKey!);
+  }
+
+  String walletSign(String message) {
+    return sign(message, walletPrivateKey!);
+  }
+
+  bool walletVerify(String signature, String message) {
+    return verify(signature, message, walletPublicKey!);
+  }
 }

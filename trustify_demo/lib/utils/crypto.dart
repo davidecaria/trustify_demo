@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pointycastle/asn1/primitives/asn1_integer.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
@@ -45,17 +46,57 @@ Future<void> storeKeyPair(String publicId, RSAPublicKey publicKey, String privat
   await storage.write(key: privateId, value: pemPrivateKey);
 }
 
-Future<List<String?>> readKeyPair(String publicId, String privateId) async {
-  const storage = FlutterSecureStorage();
+String encrypt(String plaintext, RSAPublicKey publicKey) {
+  final cipher = RSAEngine()
+    ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
+  final cipherText = cipher.process(Uint8List.fromList(plaintext.codeUnits));
 
-  String? walletPublicKey = await storage.read(key: publicId);
-  String? walletPrivateKey = await storage.read(key: privateId);
+  return String.fromCharCodes(cipherText);
+}
 
-  return [walletPublicKey, walletPrivateKey];
+String decrypt(String ciphertext, RSAPrivateKey privateKey) {
+  final cipher = RSAEngine()
+    ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
+  final decrypted = cipher.process(Uint8List.fromList(ciphertext.codeUnits));
+
+  return String.fromCharCodes(decrypted);
+}
+
+String sign(String message, RSAPrivateKey privateKey) {
+  var signer = RSASigner(SHA256Digest(), '0609608648016503040201')
+    ..init(true, PrivateKeyParameter<RSAPrivateKey>(privateKey));
+  final signed = signer.generateSignature(Uint8List.fromList(message.codeUnits));
+
+  return String.fromCharCodes(signed.bytes);
+}
+
+bool verify(String signature, String message, RSAPublicKey publicKey) {
+
+  final sig = RSASignature(Uint8List.fromList(signature.codeUnits));
+
+  final verifier = RSASigner(SHA256Digest(), '0609608648016503040201');
+
+  verifier.init(false, PublicKeyParameter<RSAPublicKey>(publicKey)); // false=verify
+
+  try {
+    return verifier.verifySignature(Uint8List.fromList(message.codeUnits), sig);
+  } on ArgumentError {
+    return false;
+  }
 }
 
 
-//
+Future<List<String?>> readKeyPair(String publicId, String privateId) async {
+  const storage = FlutterSecureStorage();
+
+  String? publicKey = await storage.read(key: publicId);
+  String? privateKey = await storage.read(key: privateId);
+
+  return [publicKey, privateKey];
+}
+
+
+// coding/encoding keys
 String encodePublicKeyInPem(RSAPublicKey key) {
   final asn = ASN1Sequence();
 
