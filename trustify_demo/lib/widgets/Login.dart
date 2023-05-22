@@ -8,7 +8,8 @@ class LoginForm extends StatefulWidget {
 
   @override
   _LoginFormState createState() => _LoginFormState();
-}
+
+  }
 
 class _LoginFormState extends State<LoginForm> {
   final LocalAuthentication _localAuthentication = LocalAuthentication();
@@ -17,9 +18,7 @@ class _LoginFormState extends State<LoginForm> {
   Future<bool> _authenticate() async {
     try {
       return await _localAuthentication.authenticate(
-        localizedReason: 'Please authenticate to login',
-        biometricOnly: true,
-        stickyAuth: true,
+        localizedReason: 'Please authenticate to login'
       );
     } on PlatformException catch (e) {
       print('Error authenticating: $e');
@@ -69,7 +68,7 @@ class _LoginFormState extends State<LoginForm> {
                     onPressed: () async {
                       bool authenticated = await _authenticate();
                       if (authenticated) {
-                        // TODO: Handle successful login
+                        // Handle successful login
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),

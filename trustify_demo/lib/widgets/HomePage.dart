@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trustify_demo/widgets/BluetoothTransferPage.dart';
+//import 'package:trustify_demo/widgets/BluetoothTransferPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,21 +8,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> passkeys = [
-    'Passkey 1',
+    'webauthn.io',
     'Passkey 2',
     'Passkey 3',
     'Passkey 4',
     'Passkey 5'
   ];
   bool isLongPressActive = false;
-  List<bool> selectetPasskeys = List<bool>.generate(5, (index) => false);
+  List<bool> selectedPasskeys = List<bool>.generate(5, (index) => false);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trustify Wallet Demo'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.white,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -68,6 +68,17 @@ class _HomePageState extends State<HomePage> {
                               isLongPressActive = true;
                             });
                           },
+                          onTap: () {
+                            if(index == 0) {
+                              /*
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>
+                                    ,
+                              );
+                               */
+                            }
+                          },
                           child: Stack(
                             children: [
                               Container(
@@ -83,10 +94,10 @@ class _HomePageState extends State<HomePage> {
                                 child: Positioned(
                                   right: 0,
                                   child: Checkbox(
-                                    value: selectetPasskeys[index],
+                                    value: selectedPasskeys[index],
                                     onChanged: (value) {
                                       setState(() {
-                                        selectetPasskeys[index] = value!;
+                                        selectedPasskeys[index] = value!;
                                       });
                                     },
                                   ),
@@ -113,11 +124,11 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Checkbox(
                         value:
-                            selectetPasskeys.every((isSelected) => isSelected),
+                            selectedPasskeys.every((isSelected) => isSelected),
                         onChanged: (value) {
                           setState(() {
-                            selectetPasskeys =
-                                List.filled(selectetPasskeys.length, value!);
+                            selectedPasskeys =
+                                List.filled(selectedPasskeys.length, value!);
                           });
                         },
                       ),
