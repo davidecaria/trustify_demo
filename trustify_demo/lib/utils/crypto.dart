@@ -57,11 +57,9 @@ String rsaEncrypt(String plaintext, RSAPublicKey publicKey) {
 }
 
 String rsaDecrypt(String ciphertext, RSAPrivateKey privateKey) {
-  final decodedCiphertext = base64.decode(ciphertext);
-
   final cipher = RSAEngine()
     ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
-  final decrypted = cipher.process(decodedCiphertext);
+  final decrypted = cipher.process(Uint8List.fromList(ciphertext.codeUnits));
 
   return String.fromCharCodes(decrypted);
 }

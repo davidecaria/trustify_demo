@@ -4,6 +4,7 @@ import 'package:pointycastle/asymmetric/api.dart';
 import 'package:pointycastle/export.dart';
 import 'package:encrypt/encrypt.dart';
 import '../utils/crypto.dart';
+import 'Passkey.dart';
 
 
 class Wallet {
@@ -11,11 +12,13 @@ class Wallet {
   static final Wallet _instance = Wallet._internal();
   RSAPublicKey? walletPublicKey;
   RSAPrivateKey? walletPrivateKey;
+  List<Passkey>? walletPasskeys;
 
   //default values
   Wallet._internal() {
     walletPublicKey = null;
     walletPrivateKey = null;
+    walletPasskeys = [];
   }
 
   factory Wallet() {

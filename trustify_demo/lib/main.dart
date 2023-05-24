@@ -30,21 +30,6 @@ void main() async {
   if(isCreated) {
     print("created passkey");
   }
-
-  const challenge = "ciao";
-  final signature = rsaSign(challenge, applicationWallet.walletPrivateKey!);
-
- final isVerified = rsaVerify(signature, challenge, applicationWallet.walletPublicKey!);
-
-  if(isVerified) {
-    print("authenticated");
-  }
-
-  final decodedPasskeySecret = aesCbcDecrypt(testPasskey.endToEndKey!, testPasskey.passkeyIV, testPasskey.encryptedSecretKey);
-  if (utf8.decode(decodedPasskeySecret) == encodePrivateKeyInPem(testPasskey.passkeyPrivateKey!))
-    final decryptWorks=true;
-
-
 }
 
 class MyApp extends StatelessWidget {

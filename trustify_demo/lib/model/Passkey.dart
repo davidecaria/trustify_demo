@@ -45,10 +45,18 @@ class Passkey {
   //end-to-end key
   Uint8List? endToEndKey;
 
+  Passkey.empty() {
+    userId = '';
+    username = '';
+    displayName = '';
+    relyingPartyName = '';
+    relyingPartyId = '';
+  }
+
   Passkey({
     this.challenge = '',
     //This specifies support for ECDSA with P-256 and RSA PKCS#1 and supporting these gives complete coverage
-    this.pubKeyCredParams = '[{alg: -7, type: "public-key"},{alg: -257, type: "public-key"}]',
+    this.pubKeyCredParams = '[{"alg": -7, "type": "public-key"},{"alg": -257, "type": "public-key"}]',
     this.requireResidentKey = true,
     this.authenticatorAttachment = 'platform',
     this.excludeCredentialsId = '',
@@ -67,7 +75,7 @@ class Passkey {
     this.relyingPartyId = relyingPartyId!;
   }
 
-  //set end-to-end key -> it will be used to retrieve the key and send to new device
+  //set end-to-end key -> it will be used to retrieve the key and send to new device via bluetooth
   Future<void> readEndToEndKey(String passkeyId) async {
     final endToEndKeyId = "${passkeyId}_e2e";
     final endToEndKeyString = await readKeyValue(endToEndKeyId);
@@ -104,10 +112,10 @@ class Passkey {
      userId = jsonCredentialOption['user']['id'];
      username = jsonCredentialOption['user']['name'];
      displayName = jsonCredentialOption['user']['displayName'];
-     pubKeyCredParams = jsonCredentialOption['pubKeyCredParams'];
+     pubKeyCredParams = json.encode(jsonCredentialOption['pubKeyCredParams']);
      excludeCredentialsId = jsonCredentialOption['excludeCredentials'][0]['id'];
      excludeCredentialsType = jsonCredentialOption['excludeCredentials'][0]['type'];
-     excludeCredentialsTransports = jsonCredentialOption['excludeCredentials'][0]['transports'];
+     excludeCredentialsTransports = json.encode(jsonCredentialOption['excludeCredentials'][0]['transports']);
      authenticatorAttachment = jsonCredentialOption['authenticatorSelection']['authenticatorAttachment'];
      requireResidentKey = jsonCredentialOption['authenticatorSelection']['requireResidentKey'];
 
@@ -139,7 +147,7 @@ class Passkey {
         "displayName": "$displayName"
       },
       "pubKeyCredParams": $pubKeyCredParams,
-      "excludeCredentials": '[{"id":"$excludeCredentialsId", "type": "$excludeCredentialsType", "transports": "$excludeCredentialsTransports"}]',
+      "excludeCredentials": [{"id":"$excludeCredentialsId", "type": "$excludeCredentialsType", "transports": $excludeCredentialsTransports}],
       "authenticatorSelection": {
         "authenticatorAttachment": "$authenticatorAttachment",
         "requireResidentKey": $requireResidentKey
@@ -151,16 +159,21 @@ class Passkey {
 
   Future<bool> createCredential() async {
     try {
-      /*
+
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
-        localizedReason: 'Authenticate to proceed', // Reason shown to the user
+        localizedReason: 'Confirm to register a passkey for $relyingPartyName', // Reason shown to the user
       );
-      */
-      bool isAuthenticated = true;
 
       if (isAuthenticated) {
         try {
+
+          //if a passkey exists, just populate the calling istance without registering a new one
+          final bool passkeyExists = await retrievePasskey(relyingPartyId);
+          if(passkeyExists) {
+            return false;
+          }
+
           //navigator.credentials.create() uses publicKeyCredentialCreationOptions to create the key pair in standard webauthn
           AsymmetricKeyPair<RSAPublicKey,
               RSAPrivateKey> passkeyPair = generateRSAkeyPair(
@@ -223,7 +236,7 @@ class Passkey {
     try {
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
-        localizedReason: 'Authenticate to proceed', // Reason shown to the user
+        localizedReason: 'Confirm to authenticate as $username to $relyingPartyName', // Reason shown to the user
       );
 
       if (isAuthenticated) {
