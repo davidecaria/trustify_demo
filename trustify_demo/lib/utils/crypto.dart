@@ -5,6 +5,8 @@ import 'package:pointycastle/asn1/primitives/asn1_integer.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/src/platform_check/platform_check.dart';
 import "package:pointycastle/export.dart";
+import 'package:uuid/uuid.dart';
+import 'package:pointycastle/paddings/pkcs7.dart';
 
 AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
     SecureRandom secureRandom,
@@ -46,33 +48,37 @@ Future<void> storeKeyPair(String publicId, RSAPublicKey publicKey, String privat
   await storage.write(key: privateId, value: pemPrivateKey);
 }
 
-String encrypt(String plaintext, RSAPublicKey publicKey) {
+String rsaEncrypt(String plaintext, RSAPublicKey publicKey) {
   final cipher = RSAEngine()
     ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
-  final cipherText = cipher.process(Uint8List.fromList(plaintext.codeUnits));
+  final ciphertext = cipher.process(Uint8List.fromList(plaintext.codeUnits));
 
-  return String.fromCharCodes(cipherText);
+  return String.fromCharCodes(ciphertext);
 }
 
-String decrypt(String ciphertext, RSAPrivateKey privateKey) {
+String rsaDecrypt(String ciphertext, RSAPrivateKey privateKey) {
+  final decodedCiphertext = base64.decode(ciphertext);
+
   final cipher = RSAEngine()
     ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
-  final decrypted = cipher.process(Uint8List.fromList(ciphertext.codeUnits));
+  final decrypted = cipher.process(decodedCiphertext);
 
   return String.fromCharCodes(decrypted);
 }
 
-String sign(String message, RSAPrivateKey privateKey) {
+String rsaSign(String message, RSAPrivateKey privateKey) {
   var signer = RSASigner(SHA256Digest(), '0609608648016503040201')
     ..init(true, PrivateKeyParameter<RSAPrivateKey>(privateKey));
   final signed = signer.generateSignature(Uint8List.fromList(message.codeUnits));
 
-  return String.fromCharCodes(signed.bytes);
+  return base64.encode(signed.bytes);
 }
 
-bool verify(String signature, String message, RSAPublicKey publicKey) {
+bool rsaVerify(String signature, String message, RSAPublicKey publicKey) {
 
-  final sig = RSASignature(Uint8List.fromList(signature.codeUnits));
+  final decodedSignature = base64.decode(signature);
+  
+  final sig = RSASignature(decodedSignature);
 
   final verifier = RSASigner(SHA256Digest(), '0609608648016503040201');
 
@@ -85,7 +91,6 @@ bool verify(String signature, String message, RSAPublicKey publicKey) {
   }
 }
 
-
 Future<List<String?>> readKeyPair(String publicId, String privateId) async {
   const storage = FlutterSecureStorage();
 
@@ -95,8 +100,16 @@ Future<List<String?>> readKeyPair(String publicId, String privateId) async {
   return [publicKey, privateKey];
 }
 
+//coding/encoding keys to be stored in secure storage
+String encodeCryptoMaterial(Uint8List crypto) {
+  return base64.encode(crypto);
+}
 
-// coding/encoding keys
+Uint8List decodeCryptoMaterial(String encodedCrypto) {
+  return base64.decode(encodedCrypto);
+}
+
+// coding/encoding keys to be stored in secure storage
 String encodePublicKeyInPem(RSAPublicKey key) {
   final asn = ASN1Sequence();
 
@@ -126,3 +139,78 @@ String encodePrivateKeyInPem(RSAPrivateKey key) {
   return '-----BEGIN RSA PRIVATE KEY-----\n$base64Data\n-----END RSA PRIVATE KEY-----';
 }
 
+String getUuid() {
+  const uuid = Uuid();
+
+  return uuid.v1();
+}
+
+Future<void> storeKeyValue(String key, String value) async {
+  const storage = FlutterSecureStorage();
+  await storage.write(key: key, value: value);
+}
+
+Future<String?> readKeyValue(String key) async {
+  const storage = FlutterSecureStorage();
+  String? value = await storage.read(key: key);
+
+  return value;
+}
+
+
+Uint8List? generateAesKey(int keyLength) {
+  //wrong key length
+  if(!(keyLength == 16 || keyLength == 24 || keyLength == 32)) {
+    return null;
+  }
+
+  final secureRandom = getSecureRandom();
+  final aesKey = secureRandom.nextBytes(keyLength);
+
+  return aesKey;
+}
+
+Uint8List generateAesIV() {
+  final secureRandom = getSecureRandom();
+  final iv = secureRandom.nextBytes(16);
+
+  return iv;
+}
+
+Uint8List aesCbcEncrypt(Uint8List key, Uint8List iv, Uint8List plaintext) {
+  // Create a CBC block cipher with AES, and initialize with key and IV
+
+  final cbc = CBCBlockCipher(AESEngine());
+  final paddedBlockCipher = PaddedBlockCipherImpl(PKCS7Padding(), cbc);
+
+  final cipherParameters = PaddedBlockCipherParameters(
+    ParametersWithIV<KeyParameter>(KeyParameter(key), iv),
+    null,
+  );
+
+  paddedBlockCipher.init(true, cipherParameters); // true=encrypt
+
+  // Encrypt the plaintext block-by-block
+  final ciphertext = paddedBlockCipher.process(plaintext);
+
+  return ciphertext;
+}
+
+Uint8List aesCbcDecrypt(Uint8List key, Uint8List iv, Uint8List ciphertext) {
+  // Create a CBC block cipher with AES, and initialize with key and IV
+
+  final cbc = CBCBlockCipher(AESEngine());
+  final paddedBlockCipher = PaddedBlockCipherImpl(PKCS7Padding(), cbc);
+
+  final cipherParameters = PaddedBlockCipherParameters(
+    ParametersWithIV<KeyParameter>(KeyParameter(key), iv),
+    null,
+  );
+
+  paddedBlockCipher.init(false, cipherParameters); // false=decrypt
+
+  // Encrypt the plaintext block-by-block
+  final plaintext = paddedBlockCipher.process(ciphertext);
+
+  return plaintext;
+}

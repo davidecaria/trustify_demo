@@ -52,18 +52,18 @@ class Wallet {
   }
 
   String walletEncrypt(String plaintext) {
-    return encrypt(plaintext, walletPublicKey!);
+    return rsaEncrypt(plaintext, walletPublicKey!);
   }
 
   String walletDecrypt(String ciphertext) {
-    return decrypt(ciphertext, walletPrivateKey!);
+    return rsaDecrypt(ciphertext, walletPrivateKey!);
   }
 
   String walletSign(String message) {
-    return sign(message, walletPrivateKey!);
+    return rsaSign(message, walletPrivateKey!);
   }
 
   bool walletVerify(String signature, String message) {
-    return verify(signature, message, walletPublicKey!);
+    return rsaVerify(signature, message, walletPublicKey!);
   }
 }

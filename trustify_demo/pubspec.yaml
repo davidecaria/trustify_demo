@@ -39,6 +39,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   login_form: ^0.0.3
   encrypt: ^5.0.1
+  uuid: ^3.0.7
+  json_annotation: ^4.8.1
 
 
 dev_dependencies:
