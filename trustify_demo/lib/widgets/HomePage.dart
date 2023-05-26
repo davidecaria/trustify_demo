@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trustify_demo/model/Passkey.dart';
+import 'package:trustify_demo/model/Wallet.dart';
+import 'package:trustify_demo/demoData/demoPasskey.dart';
 //import 'package:trustify_demo/widgets/BluetoothTransferPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -7,18 +10,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<String> passkeys = [
-    'webauthn.io',
-    'Passkey 2',
-    'Passkey 3',
-    'Passkey 4',
-    'Passkey 5'
-  ];
-  bool isLongPressActive = false;
-  List<bool> selectedPasskeys = List<bool>.generate(5, (index) => false);
 
   @override
   Widget build(BuildContext context) {
+
+    Wallet applicationWallet = Wallet();
+    //TEST
+    applicationWallet.setPasskeys(testPasskeysList);
+
+    List<String> passkeys = applicationWallet.getPasskeysRpId();
+
+    bool isLongPressActive = false;
+
+    List<bool> selectedPasskeys = List<bool>.generate(passkeys.length, (index) => false);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trustify Wallet Demo'),

@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:trustify_demo/model/Passkey.dart';
-import 'package:trustify_demo/utils/crypto.dart';
+import 'package:trustify_demo/widgets/HomePage.dart';
 import 'package:trustify_demo/widgets/Login.dart';
 import 'package:trustify_demo/model/Wallet.dart';
+import 'package:trustify_demo/demoData/demoPasskey.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -17,19 +15,9 @@ void main() async {
     await applicationWallet.storeWalletKeyPair();
   }
 
-  Passkey testPasskey = Passkey(
-    relyingPartyId: "www.sample.com",
-      relyingPartyName: "sample",
-      userId: "",
-      username: "testuser",
-      displayName: "test user",
-  );
+  await testPasskey.createCredential();
+  applicationWallet.walletPasskeys?.add(testPasskey);
 
-  final isCreated = await testPasskey.createCredential();
-
-  if(isCreated) {
-    print("created passkey");
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -43,7 +31,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LoginForm(),
+      home: HomePage(),
     );
   }
 }

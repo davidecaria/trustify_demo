@@ -32,6 +32,24 @@ class Wallet {
     walletPrivateKey = walletPair.privateKey;
   }
 
+  void setPasskeys(List<Passkey> passkeysList) {
+    for (var passkey in passkeysList) {
+      walletPasskeys?.add(passkey);
+    }
+  }
+
+  List<String> getPasskeysRpId() {
+    List<String> passkeysRpId = [];
+
+    for (var passkey in walletPasskeys!) {
+        passkeysRpId.add(passkey.relyingPartyId);
+      }
+
+    return passkeysRpId;
+
+  }
+
+
   Future<void> storeWalletKeyPair() async {
     await storeKeyPair(
         "wallet_public_key", walletPublicKey!, "wallet_private_key",
