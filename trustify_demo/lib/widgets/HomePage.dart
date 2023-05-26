@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text(
           'Trustify Wallet Demo',
           style: TextStyle(
-            color: Colors.purple,
+            color: Colors.blueAccent,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.purple.shade300,
-              Colors.purple.shade700,
+              Colors.blueAccent.shade400,
+              Colors.blueAccent.shade700,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+                      color: Colors.blueAccent,
                     ),
                     textAlign: TextAlign.center,
                   ),
