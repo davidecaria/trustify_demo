@@ -5,23 +5,29 @@ import 'package:trustify_demo/model/Wallet.dart';
 import 'package:trustify_demo/demoData/demoPasskey.dart';
 
 void main() async {
-  runApp(const MyApp());
+  runApp(const TrustifyClientDemo());
 
   Wallet applicationWallet = Wallet();
   bool walletExists = await applicationWallet.readWalletKeyPair();
 
-  if(!walletExists) {
+  if (!walletExists) {
     applicationWallet.initialize();
     await applicationWallet.storeWalletKeyPair();
   }
 
-  await testPasskey.createCredential();
-  applicationWallet.walletPasskeys?.add(testPasskey);
+  var isCreated = await testPasskey1.createCredential();
+  if (isCreated) {
+    applicationWallet.walletPasskeys?.add(testPasskey1);
+  }
 
+  isCreated = await testPasskey2.createCredential();
+  if (isCreated) {
+    applicationWallet.walletPasskeys?.add(testPasskey2);
+  }
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TrustifyClientDemo extends StatelessWidget {
+  const TrustifyClientDemo({super.key});
 
   @override
   Widget build(BuildContext context) {

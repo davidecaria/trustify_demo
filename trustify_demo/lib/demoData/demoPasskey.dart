@@ -1,7 +1,7 @@
 //creation of demo data
 import '../model/Passkey.dart';
 
-Passkey testPasskey = Passkey(
+Passkey testPasskey1 = Passkey(
   relyingPartyId: "www.sample.com",
   relyingPartyName: "sample",
   userId: "",
@@ -9,4 +9,12 @@ Passkey testPasskey = Passkey(
   displayName: "test user",
 );
 
-List<Passkey> testPasskeysList = [testPasskey];
+Passkey testPasskey2 = Passkey(
+  relyingPartyId: "www.service.com",
+  relyingPartyName: "service",
+  userId: "",
+  username: "another_user",
+  displayName: "another user",
+);
+
+List<Passkey> testPasskeysList = [testPasskey1, testPasskey2];

@@ -7,7 +7,6 @@ import 'package:pointycastle/asymmetric/api.dart';
 import '../utils/crypto.dart';
 
 class Passkey {
-
   late String passkeyId;
 
   //TEST
@@ -56,7 +55,8 @@ class Passkey {
   Passkey({
     this.challenge = '',
     //This specifies support for ECDSA with P-256 and RSA PKCS#1 and supporting these gives complete coverage
-    this.pubKeyCredParams = '[{"alg": -7, "type": "public-key"},{"alg": -257, "type": "public-key"}]',
+    this.pubKeyCredParams =
+        '[{"alg": -7, "type": "public-key"},{"alg": -257, "type": "public-key"}]',
     this.requireResidentKey = true,
     this.authenticatorAttachment = 'platform',
     this.excludeCredentialsId = '',
@@ -79,7 +79,7 @@ class Passkey {
   Future<void> readEndToEndKey(String passkeyId) async {
     final endToEndKeyId = "${passkeyId}_e2e";
     final endToEndKeyString = await readKeyValue(endToEndKeyId);
-    endToEndKey =  Uint8List.fromList(utf8.encode(endToEndKeyString!));
+    endToEndKey = Uint8List.fromList(utf8.encode(endToEndKeyString!));
   }
 
   // set passkeys key-pair
@@ -87,7 +87,8 @@ class Passkey {
     final passkeyPublicKeyId = "${passkeyId}_public";
     final passkeyPrivateKeyId = "${passkeyId}_private";
 
-    List<String?> passkeyKeyPair = await readKeyPair(passkeyPublicKeyId, passkeyPrivateKeyId);
+    List<String?> passkeyKeyPair =
+        await readKeyPair(passkeyPublicKeyId, passkeyPrivateKeyId);
 
     if (passkeyKeyPair[0] == null || passkeyKeyPair[1] == null) {
       return false;
@@ -101,37 +102,44 @@ class Passkey {
   }
 
   Future<bool> retrievePasskey(String relyingPartyId) async {
-   try {
-     final passkeyId = await readKeyValue(relyingPartyId);
-     final credentialOption = await readKeyValue(passkeyId!);
-     final Map<String, dynamic> jsonCredentialOption =  json.decode(credentialOption!);
+    try {
+      final passkeyId = await readKeyValue(relyingPartyId);
+      final credentialOption = await readKeyValue(passkeyId!);
+      final Map<String, dynamic> jsonCredentialOption =
+          json.decode(credentialOption!);
 
-     challenge = jsonCredentialOption['challenge'];
-     relyingPartyName = jsonCredentialOption['rp']['name'];
-     relyingPartyId = jsonCredentialOption['rp']['id'];
-     userId = jsonCredentialOption['user']['id'];
-     username = jsonCredentialOption['user']['name'];
-     displayName = jsonCredentialOption['user']['displayName'];
-     pubKeyCredParams = json.encode(jsonCredentialOption['pubKeyCredParams']);
-     excludeCredentialsId = jsonCredentialOption['excludeCredentials'][0]['id'];
-     excludeCredentialsType = jsonCredentialOption['excludeCredentials'][0]['type'];
-     excludeCredentialsTransports = json.encode(jsonCredentialOption['excludeCredentials'][0]['transports']);
-     authenticatorAttachment = jsonCredentialOption['authenticatorSelection']['authenticatorAttachment'];
-     requireResidentKey = jsonCredentialOption['authenticatorSelection']['requireResidentKey'];
+      challenge = jsonCredentialOption['challenge'];
+      relyingPartyName = jsonCredentialOption['rp']['name'];
+      relyingPartyId = jsonCredentialOption['rp']['id'];
+      userId = jsonCredentialOption['user']['id'];
+      username = jsonCredentialOption['user']['name'];
+      displayName = jsonCredentialOption['user']['displayName'];
+      pubKeyCredParams = json.encode(jsonCredentialOption['pubKeyCredParams']);
+      excludeCredentialsId =
+          jsonCredentialOption['excludeCredentials'][0]['id'];
+      excludeCredentialsType =
+          jsonCredentialOption['excludeCredentials'][0]['type'];
+      excludeCredentialsTransports = json
+          .encode(jsonCredentialOption['excludeCredentials'][0]['transports']);
+      authenticatorAttachment = jsonCredentialOption['authenticatorSelection']
+          ['authenticatorAttachment'];
+      requireResidentKey =
+          jsonCredentialOption['authenticatorSelection']['requireResidentKey'];
 
-     // set key-pair
-     final passkeyExists = await readPasskeyKeyPair(passkeyId);
+      // set key-pair
+      final passkeyExists = await readPasskeyKeyPair(passkeyId);
 
-      if(!passkeyExists) {
+      if (!passkeyExists) {
         return false;
       }
 
-      return true;
-   } catch(e) {
-     return false;
-   }
-  }
+      this.passkeyId = passkeyId;
 
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   String getCredentialCreationOption() {
     String credentialCreationOption = '''
@@ -154,30 +162,29 @@ class Passkey {
       }
     }
   ''';
-  return credentialCreationOption;
+    return credentialCreationOption;
   }
 
   Future<bool> createCredential() async {
     try {
-
+      /*
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
         localizedReason: 'Confirm to register a passkey for $relyingPartyName', // Reason shown to the user
       );
+      */
 
-      if (isAuthenticated) {
+      if (true) {
         try {
-
           //if a passkey exists, just populate the calling istance without registering a new one
           final bool passkeyExists = await retrievePasskey(relyingPartyId);
-          if(passkeyExists) {
+          if (passkeyExists) {
             return false;
           }
 
           //navigator.credentials.create() uses publicKeyCredentialCreationOptions to create the key pair in standard webauthn
-          AsymmetricKeyPair<RSAPublicKey,
-              RSAPrivateKey> passkeyPair = generateRSAkeyPair(
-              getSecureRandom());
+          AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> passkeyPair =
+              generateRSAkeyPair(getSecureRandom());
           passkeyPublicKey = passkeyPair.publicKey;
           passkeyPrivateKey = passkeyPair.privateKey;
 
@@ -196,23 +203,26 @@ class Passkey {
 
           //storing end-to-end key
           final endToEndKeyId = "${passkeyId}_e2e";
-          await storeKeyValue(endToEndKeyId, encodeCryptoMaterial(endToEndKey!));
+          await storeKeyValue(
+              endToEndKeyId, encodeCryptoMaterial(endToEndKey!));
 
           // storing key-pair
           final passkeyPublicKeyId = "${passkeyId}_public";
           final passkeyPrivateKeyId = "${passkeyId}_private";
-          await storeKeyPair(passkeyPublicKeyId, passkeyPublicKey!, passkeyPrivateKeyId, passkeyPrivateKey!);
+          await storeKeyPair(passkeyPublicKeyId, passkeyPublicKey!,
+              passkeyPrivateKeyId, passkeyPrivateKey!);
 
           // passkeys material must be sent server-side at this point
           passkeyIV = generateAesIV();
           final pemPrivateKey = encodePrivateKeyInPem(passkeyPrivateKey!);
-          final passkeySecretKey = Uint8List.fromList(utf8.encode(pemPrivateKey));
+          final passkeySecretKey =
+              Uint8List.fromList(utf8.encode(pemPrivateKey));
 
           //must be sent to server
-          encryptedSecretKey = aesCbcEncrypt(endToEndKey!, passkeyIV, passkeySecretKey);
+          encryptedSecretKey =
+              aesCbcEncrypt(endToEndKey!, passkeyIV, passkeySecretKey);
 
           return true;
-
         } catch (e) {
           return false;
         }
@@ -231,12 +241,12 @@ class Passkey {
     return getUuid();
   }
 
-
   Future<String?> authenticate(String challenge) async {
     try {
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
-        localizedReason: 'Confirm to authenticate as $username to $relyingPartyName', // Reason shown to the user
+        localizedReason:
+            'Confirm to authenticate as $username to $relyingPartyName', // Reason shown to the user
       );
 
       if (isAuthenticated) {
