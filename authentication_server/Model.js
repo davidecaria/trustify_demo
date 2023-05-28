@@ -3,16 +3,13 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-
     walletPublicKey: {
         type: String,
         required: true,
         unique: true,
     },
-
     //passkeys are stored inside wallet array
     wallet: [{
-
         relyingPartyId: {
             type: String,
             required: true,
@@ -38,7 +35,13 @@ const userSchema = new mongoose.Schema({
             required: true,
             unique: true
         },
-        
+
+        passkeySecretKeyE2E: {
+            type: String,
+            required: true,
+            unique: true
+        },
+
         //signature of passkey made with the wallet private key
         passkeySignature: {
             type: String,

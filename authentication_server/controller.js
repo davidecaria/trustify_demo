@@ -3,6 +3,47 @@ const crypto = require("crypto");
 const moment = require('moment');
 const { UsedNonce, UserSchema } = require("./Model");
 
+/** - This route is called to register a new passkey inside user's wallet
+ * @param {walletPublicKey relyingPartyId relyingPartyName username passkeyPublicKey passkeySecretKeyE2E passkeySignature} request 
+ * @param {} response 
+ * @returns confirmation/rejection message
+ */
+const register = async (request, response) => {
+    try {        
+        if (!request.body.hasOwnProperty("walletPublicKey") || !request.body.hasOwnProperty("relyingPartyId")
+            || !request.body.hasOwnProperty("relyingPartyName") || !request.body.hasOwnProperty("username")
+            || !request.body.hasOwnProperty("passkeyPublicKey") || !request.body.hasOwnProperty("passkeySecretKeyE2E")
+            || !request.body.hasOwnProperty("passkeySignature")) {
+            return response.status(400).json({ flag: false, error: "Missing parameters" });
+        }
+
+        if (!request.body.walletPublicKey || !request.body.relyingPartyId
+            || !request.body.relyingPartyName || !request.body.username
+            || !request.body.passkeyPublicKey || !request.body.passkeySecretKeyE2E || !request.body.passkeySignature) {
+            return response.status(400).json({ flag: false, error: "Empty parameters" });
+        }
+
+        const { walletPublicKey, relyingPartyId, relyingPartyName, username, passkeyPublicKey, passkeySecretKeyE2E, passkeySignature } = request.body;
+
+        const user = await UserSchema.find({ walletPublicKey: walletPublicKey });
+        
+        user.wallet.push({
+            relyingPartyId: relyingPartyId,
+            relyingPartyName: relyingPartyName,
+            username: username,
+            passkeyPublicKey: passkeyPublicKey,
+            passkeySecretKeyE2E: passkeySecretKeyE2E,
+            passkeySignature: passkeySignature
+        });
+
+        await user.save();
+
+        return response.status(200).json({ flag: true, message: "New passkey registered successfully" });
+
+    } catch (error) {
+        return response.status(400).json({ flag: false, error: error });
+    }
+};
 
 
 /** - This route is called by the client application to initiate the authentication process:
@@ -51,7 +92,7 @@ const authenticate = async (request, response) => {
             return response.status(400).json({ error: "Empty Parameters" });
         }
 
-        const { walletPublicKey, response, nonce } = req.body;
+        const { walletPublicKey, response, nonce } = request.body;
 
         const authenticationMaterial = await UsedNonce.find({ walletPublicKey: walletPublicKey, nonce: nonce });
 
@@ -87,4 +128,4 @@ const authenticate = async (request, response) => {
     }
 };
 
-module.exports = { authenticate, generateChallenge };
+module.exports = { authenticate, generateChallenge, register };
