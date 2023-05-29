@@ -4,7 +4,15 @@ import 'package:encrypt/encrypt.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/asymmetric/api.dart';
-import '../utils/crypto.dart';
+import 'package:trustify_demo/model/Wallet.dart';
+import '../utils/Crypto.dart';
+import '../utils/Server.dart' as server;
+
+const apiBaseUrl = "http://192.168.1.6:3001";
+const authenticateUrl = "/api/authenticate";
+const registerUrl = "/api/register";
+
+Wallet applicationWallet = Wallet();
 
 class Passkey {
   late String passkeyId;
@@ -217,12 +225,34 @@ class Passkey {
           final pemPrivateKey = encodePrivateKeyInPem(passkeyPrivateKey!);
           final passkeySecretKey =
               Uint8List.fromList(utf8.encode(pemPrivateKey));
-
           //must be sent to server
-          encryptedSecretKey =
-              aesCbcEncrypt(endToEndKey!, passkeyIV, passkeySecretKey);
+          final encryptedSecretKeyE2E = encodeCryptoMaterial(
+              aesCbcEncrypt(endToEndKey!, passkeyIV, passkeySecretKey));
 
-          return true;
+          final b64PemPublicKey = encodeCryptoMaterial(Uint8List.fromList(
+              encodePublicKeyInPem(passkeyPublicKey!).codeUnits));
+          final passkeySignature =
+              applicationWallet.walletSign(credentialCreationOption);
+          final b64PemWalletPublicKey = encodeCryptoMaterial(Uint8List.fromList(
+              encodePublicKeyInPem(applicationWallet.walletPublicKey!)
+                  .codeUnits));
+
+          final requestBody = {
+            "walletPublicKey": b64PemWalletPublicKey,
+            "relyingPartyId": relyingPartyId,
+            "relyingPartyName": relyingPartyName,
+            "username": username,
+            "passkeyPublicKey": b64PemPublicKey,
+            "passkeySecretKeyE2E": encryptedSecretKeyE2E,
+            "passkeySignature": passkeySignature
+          };
+
+          final isPasskeyStored = await server.register(requestBody);
+
+          if (isPasskeyStored) {
+            return true;
+          }
+          return false;
         } catch (e) {
           return false;
         }
@@ -231,6 +261,7 @@ class Passkey {
         // Handle accordingly
         return false;
       }
+      return true;
     } catch (e) {
       // Handle any exceptions that occurred during authentication
       return false;
@@ -241,26 +272,49 @@ class Passkey {
     return getUuid();
   }
 
-  Future<String?> authenticate(String challenge) async {
+  Future<bool> authenticate() async {
     try {
+      /*
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
         localizedReason:
             'Confirm to authenticate as $username to $relyingPartyName', // Reason shown to the user
       );
+      */
+      const isAuthenticated = true;
 
       if (isAuthenticated) {
         // Fingerprint authentication succeeded
         // Proceed with the protected operation
-        return rsaSign(challenge, passkeyPrivateKey!);
+        final b64PemWalletPublicKey = encodeCryptoMaterial(Uint8List.fromList(
+            encodePublicKeyInPem(applicationWallet.walletPublicKey!)
+                .codeUnits));
+
+        final queryParameters = {
+          "relyingPartyId": relyingPartyId,
+          "walletPublicKey": b64PemWalletPublicKey
+        };
+
+        final challenge = await server.getChallenge(queryParameters);
+        final signedChallenge = rsaSign(challenge!, passkeyPrivateKey!);
+
+        final requestBody = {
+          "walletPublicKey": b64PemWalletPublicKey,
+          "relyingPartyId": relyingPartyId,
+          "signature": signedChallenge,
+          "challenge": challenge
+        };
+
+        final authenticationResult = await server.authenticate(requestBody);
+        return authenticationResult;
       } else {
         // Fingerprint authentication failed or was canceled
         // Handle accordingly
-        return null;
+        return false;
       }
     } catch (e) {
       // Handle any exceptions that occurred during authentication
-      return null;
+      return false;
     }
   }
 }

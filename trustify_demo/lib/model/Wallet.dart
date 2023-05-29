@@ -3,9 +3,8 @@ import 'package:pointycastle/api.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:pointycastle/export.dart';
 import 'package:encrypt/encrypt.dart';
-import '../utils/crypto.dart';
+import '../utils/Crypto.dart';
 import 'Passkey.dart';
-
 
 class Wallet {
   //singleton instantiation
@@ -26,8 +25,8 @@ class Wallet {
   }
 
   initialize() {
-    AsymmetricKeyPair<RSAPublicKey,
-        RSAPrivateKey> walletPair = generateRSAkeyPair(getSecureRandom());
+    AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> walletPair =
+        generateRSAkeyPair(getSecureRandom());
     walletPublicKey = walletPair.publicKey;
     walletPrivateKey = walletPair.privateKey;
   }
@@ -42,23 +41,20 @@ class Wallet {
     List<String> passkeysRpId = [];
 
     for (var passkey in walletPasskeys!) {
-        passkeysRpId.add(passkey.relyingPartyId);
-      }
+      passkeysRpId.add(passkey.relyingPartyId);
+    }
 
     return passkeysRpId;
-
   }
 
-
   Future<void> storeWalletKeyPair() async {
-    await storeKeyPair(
-        "wallet_public_key", walletPublicKey!, "wallet_private_key",
-        walletPrivateKey!);
+    await storeKeyPair("wallet_public_key", walletPublicKey!,
+        "wallet_private_key", walletPrivateKey!);
   }
 
   Future<bool> readWalletKeyPair() async {
-    List<String?> walletKeyPair = await readKeyPair(
-        "wallet_public_key", "wallet_private_key");
+    List<String?> walletKeyPair =
+        await readKeyPair("wallet_public_key", "wallet_private_key");
 
     if (walletKeyPair[0] == null || walletKeyPair[1] == null) {
       return false;

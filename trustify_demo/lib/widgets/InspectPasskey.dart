@@ -1,10 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:trustify_demo/model/Passkey.dart';
 
-class InspectPasskey extends StatelessWidget {
+class InspectPasskey extends StatefulWidget {
   final Passkey thisPasskey;
 
   const InspectPasskey({Key? key, required this.thisPasskey}) : super(key: key);
+
+  @override
+  _InspectPasskeyState createState() => _InspectPasskeyState();
+}
+
+class _InspectPasskeyState extends State<InspectPasskey> {
+  bool isLoading = false;
+
+  Future<void> handleAuthentication() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final authenticationResult = await widget.thisPasskey.authenticate();
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (authenticationResult) {
+      const snackBar = SnackBar(
+        content: Text("Authentication with Passkey successful"),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      const snackBar = SnackBar(
+        content: Text("Authentication with Passkey failed"),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +76,7 @@ class InspectPasskey extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  thisPasskey.relyingPartyId,
+                  widget.thisPasskey.relyingPartyId,
                   style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 30),
@@ -55,7 +86,7 @@ class InspectPasskey extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  thisPasskey.username,
+                  widget.thisPasskey.username,
                   style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 30),
@@ -65,7 +96,7 @@ class InspectPasskey extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  thisPasskey.passkeyId,
+                  widget.thisPasskey.passkeyId,
                   style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 50),
@@ -74,14 +105,12 @@ class InspectPasskey extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle button 1 press
-                        },
-                        child: const Text('Authenticate'),
+                        onPressed: isLoading ? null : handleAuthentication,
+                        child: Text('Authenticate'),
                       ),
                       const SizedBox(width: 20),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // Handle button 2 press
                         },
                         child: const Text('Transfer'),
@@ -89,6 +118,10 @@ class InspectPasskey extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (isLoading)
+                  Center(
+                    child: CircularProgressIndicator(),
+                  ),
               ],
             ),
           ),

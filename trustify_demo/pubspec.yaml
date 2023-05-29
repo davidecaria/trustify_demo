@@ -41,6 +41,7 @@ dependencies:
   encrypt: ^5.0.1
   uuid: ^3.0.7
   json_annotation: ^4.8.1
+  http: ^0.13.6
 
 
 dev_dependencies:

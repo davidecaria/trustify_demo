@@ -16,8 +16,17 @@ class _HomePageState extends State<HomePage> {
   List<bool> selectedPasskeys = [];
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+    var isCreated = await testPasskey1.createCredential();
+    if (isCreated) {
+      applicationWallet.walletPasskeys?.add(testPasskey1);
+    }
+
+    isCreated = await testPasskey2.createCredential();
+    if (isCreated) {
+      applicationWallet.walletPasskeys?.add(testPasskey2);
+    }
     //TEST
     applicationWallet.setPasskeys(testPasskeysList);
     passkeysRPsName = applicationWallet.getPasskeysRpId();

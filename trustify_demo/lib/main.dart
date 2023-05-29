@@ -14,16 +14,6 @@ void main() async {
     applicationWallet.initialize();
     await applicationWallet.storeWalletKeyPair();
   }
-
-  var isCreated = await testPasskey1.createCredential();
-  if (isCreated) {
-    applicationWallet.walletPasskeys?.add(testPasskey1);
-  }
-
-  isCreated = await testPasskey2.createCredential();
-  if (isCreated) {
-    applicationWallet.walletPasskeys?.add(testPasskey2);
-  }
 }
 
 class TrustifyClientDemo extends StatelessWidget {

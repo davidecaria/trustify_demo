@@ -27,7 +27,6 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true,
             max: 255,
-            unique: true
         },
 
         passkeyPublicKey: {
@@ -56,9 +55,16 @@ const usedNonceSchema = new mongoose.Schema({
     walletPublicKey: {
         type: String,
         required: true,
+        unique: true
     },
 
-    nonce: {
+    relyingPartyId: {
+        type: String,
+        required: true,
+        max: 255,
+    },
+
+    challenge: {
         type: String,
         required: true,
         unique: true,
@@ -72,6 +78,6 @@ const usedNonceSchema = new mongoose.Schema({
 
 // Create a model based on the schema
 const UsedNonce = mongoose.model('UsedNonce', usedNonceSchema);
-const UserSchema = mongoose.model('UserSchema', userSchema);
+const User = mongoose.model('User', userSchema);
 
-module.exports = { UsedNonce, UserSchema };
+module.exports = { UsedNonce, User };

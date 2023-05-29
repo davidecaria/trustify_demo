@@ -32,4 +32,5 @@ router.post("/authenticate", authenticate);
 router.post("/register", register);
 
 // start the server
-app.listen(port, () => console.log(`API server started on port ${port}`));
+app.listen(port, () => console.log(`Trustify API server started on port ${port}`));
+
