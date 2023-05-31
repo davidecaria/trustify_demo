@@ -34,16 +34,63 @@ const { UsedNonce, User } = require("./Model");
 // array used to store and keep track of last sent challenges
 let challengeCache = [];
 
+/**
+ * @description
+ * This route is called to synchronize the requested passkey inside the wallet from which the synchronization request has been sent;
+ * the request is a JSON object containing the following parameters:
+ * @param walletPublicKey - associated to new user's wallet (RSA public-key in pem format, then base64 encoded)
+ * @param relyingPartyName - relying party identification name
+ * @param username - user's identifier within relying party's provided service/application
+ * @returns a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons; 
+ * passkey: passkey object to be stored locally on requesting user's device
+ */
+const synchronizePasskey = async (request, response) => {
+    try {
+
+        if (!request.query.hasOwnProperty("walletPublicKey") || !request.query.hasOwnProperty("relyingPartyName")
+            || !request.query.hasOwnProperty("username")) {
+            return response.status(400).json({ flag: false, error: "Missing parameters" });
+        }
+
+        if (!request.query.walletPublicKey || !request.query.relyingPartyName || !request.query.username) {
+            return response.status(400).json({ flag: false, error: "Empty Wallet public-key" });
+        }
+
+        const { walletPublicKey, relyingPartyName, username } = request.query;
+
+        const user = await User.findOne({ walletPublicKey: walletPublicKey });
+
+        if (!user) {
+            return response.status(401).json({ error: "User does not exists" });
+        }
+
+        console.log("User requesting synchronization of passkey: " + user.walletPublicKey + "\n\n");
+
+        //retrieve correct passkey
+        const passkey = user.wallet.find(passkey => passkey.relyingPartyName === relyingPartyName &amp;&amp; passkey.username === username);
+
+        if (!passkey) {
+            return response.status(401).json({ error: `User: ${username} does not have a valid passkey for service: ${relyingPartyName}` });
+        }
+
+        console.log("Passkey to be synchronized: " + passkey  + "\n\n");
+
+        return response.status(200).json({ flag: true, message: "Passkey retrieved successfully", passkey: passkey });
+    } catch (error) {
+        return response.status(400).json({ flag: false, error: error });
+    }
+};
+
 /** 
  *  @description
  * - This route is called to register a new user inside the application through the public key of its wallet: 
  * this is needed to later store its personal passkeys; the request is a JSON object containing the following parameters:
  * @param WalletPublicKey - associated to new user's wallet (RSA public-key in pem format, then base64 encoded)
- * @returns {} a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons 
+ * @returns a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons 
  */
 const registerUser = async (request, response) => {
     try {
-        console.log(request.body.walletPublicKey);
+
         if (!request.body.hasOwnProperty("walletPublicKey")) {
             return response.status(400).json({ flag: false, error: "Missing Wallet public-key" });
         }
@@ -55,13 +102,13 @@ const registerUser = async (request, response) => {
         const walletPublicKey = request.body.walletPublicKey;
 
         //creating a new user with an empty wallet
-        await User.create({ walletPublicKey: walletPublicKey, wallet: [] });
+        const newUser = await User.create({ walletPublicKey: walletPublicKey, wallet: [] });
+
+        console.log("New user record: " + newUser  + "\n\n");
 
         return response.status(200).json({ flag: true, message: "New user created successfully" });
     } catch (error) {
-        console.log(error);
         return response.status(400).json({ flag: false, error: error });
-
     }
 };
 
@@ -98,7 +145,12 @@ const registerPasskey = async (request, response) => {
         const { walletPublicKey, relyingPartyId, relyingPartyName, username, passkeyPublicKey, passkeySecretKeyE2E, passkeySignature } = request.body;
 
         const user = await User.findOne({ walletPublicKey: walletPublicKey });
-        console.log(user);
+
+        if (!user) {
+            return response.status(401).json({ error: "User does not exists" });
+        }
+
+        console.log("Retrieved user: " + user  + "\n\n");
 
         //storing new passkey inside server-side wallet
         user.wallet.push({
@@ -115,7 +167,6 @@ const registerPasskey = async (request, response) => {
         return response.status(200).json({ flag: true, message: "New passkey registered successfully" });
 
     } catch (error) {
-        console.log(error);
         return response.status(400).json({ flag: false, error: error });
     }
 };
@@ -147,9 +198,12 @@ const generateChallenge = async (request, response) => {
 
         const user = await User.findOne({ walletPublicKey: walletPublicKey });
 
+
         if (!user) {
             return response.status(401).json({ error: "User does not exists" });
         }
+
+        console.log("User requesting authentication: " + user  + "\n\n");
 
         const passkey = user.wallet.find(passkey => passkey.relyingPartyId === relyingPartyId);
 
@@ -157,15 +211,18 @@ const generateChallenge = async (request, response) => {
             return response.status(401).json({ error: `User does not have a valid passkey for service: ${relyingPartyId}` });
         }
 
+        console.log("Passkey to be used: " + passkey  + "\n\n");
+
         // store nonces to keep track of the one been sent and avoid replay attacks
-        await UsedNonce.create({ walletPublicKey: walletPublicKey, relyingPartyId: relyingPartyId, challenge: challenge });
+        const createdNonce = await UsedNonce.create({ walletPublicKey: walletPublicKey, relyingPartyId: relyingPartyId, challenge: challenge });
+
+        console.log("Server-side authentication record: " + createdNonce);
 
         //cache the obtained challenge
         challengeCache.push(challenge);
 
         return response.status(200).json({ flag: true, challenge: challenge });
     } catch (error) {
-        console.log(error);
         return response.status(400).json({ flag: false, error: error });
     }
 };
@@ -200,13 +257,17 @@ const authenticate = async (request, response) => {
         const { walletPublicKey, signature, challenge, relyingPartyId } = request.body;
 
         const user = await User.findOne({ walletPublicKey: walletPublicKey });
-        console.log(user);
+
+        console.log("User to authenticate: " + user  + "\n\n");
+
         if (!user) {
             await authenticationMaterial.deleteOne({ challenge: challenge });
             return response.status(401).json({ error: "User does not exists" });
         }
 
         const authenticationMaterial = await UsedNonce.findOne({ walletPublicKey: walletPublicKey, relyingPartyId: relyingPartyId, challenge: challenge });
+
+        console.log("Retrieved server-side authentication record" + authenticationMaterial  + "\n\n");
 
         //challenge was not issued by server or "belongs" to a different user
         if (authenticationMaterial.relyingPartyId !== relyingPartyId) {
@@ -216,10 +277,9 @@ const authenticate = async (request, response) => {
 
         //check if challenge has not expired
         const currentDate = moment();
-        const duration = moment.duration(currentDate.diff(authenticationMaterial.validity));
-        const minutesDiff = duration.asMinutes();
-
-        if (minutesDiff > 4) {
+        const secondsDifference = moment.duration(currentDate.diff(authenticationMaterial.validity, 'seconds'));
+      
+        if (secondsDifference > 30) {
             await authenticationMaterial.deleteOne({ challenge: challenge });
             return response.status(401).json({ flag: false, error: "Challenge expired" });
         }
@@ -230,10 +290,19 @@ const authenticate = async (request, response) => {
 
         //retrieve correct passkey
         const passkey = user.wallet.find(passkey => passkey.relyingPartyId === relyingPartyId);
+
+        if (!passkey) {
+            return response.status(401).json({ error: `User does not have a valid passkey for service: ${relyingPartyId}` });
+        }
+
+        console.log("Retrieved passkey: " + passkey  + "\n\n");
+
         //retrieving pem format of passkey public key
         const passkeyPublicKey = atob(passkey.passkeyPublicKey);
         //validate authentication
         const isSignatureValid = verifier.verify(passkeyPublicKey, signature, 'base64');
+
+        console.log("Signature verification result: " + isSignatureValid  + "\n\n");
 
         if (!isSignatureValid) {
             await authenticationMaterial.deleteOne({ challenge: challenge });
@@ -246,12 +315,11 @@ const authenticate = async (request, response) => {
         return response.status(200).json({ flag: true, message: "Authentication succeeded" });
     } catch (error) {
         await authenticationMaterial.deleteOne({ challenge: challenge });
-        console.log(error);
         return response.status(400).json({ flag: false, error: error });
     }
 };
 
-module.exports = { authenticate, generateChallenge, registerPasskey, registerUser };
+module.exports = { authenticate, generateChallenge, registerPasskey, registerUser, synchronizePasskey };
 </code></pre>
         </article>
     </section>
@@ -262,13 +330,13 @@ module.exports = { authenticate, generateChallenge, registerPasskey, registerUse
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#generateChallenge">generateChallenge</a></li><li><a href="global.html#registerPasskey">registerPasskey</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#usedNonceSchema">usedNonceSchema</a></li><li><a href="global.html#userSchema">userSchema</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#generateChallenge">generateChallenge</a></li><li><a href="global.html#passkeySchema">passkeySchema</a></li><li><a href="global.html#registerPasskey">registerPasskey</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#synchronizePasskey">synchronizePasskey</a></li><li><a href="global.html#usedNonceSchema">usedNonceSchema</a></li><li><a href="global.html#userSchema">userSchema</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue May 30 2023 20:04:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Jun 01 2023 00:28:49 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -98,6 +98,68 @@
 
         
             
+<h4 class="name" id="passkeySchema"><span class="type-signature">(constant) </span>passkeySchema<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Define a Schema for the passkey object to be stored inside corresponding user's wallet
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Model.js.html">Model.js</a>, <a href="Model.js.html#line16">line 16</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="usedNonceSchema"><span class="type-signature">(constant) </span>usedNonceSchema<span class="type-signature"></span></h4>
 
 
@@ -142,7 +204,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Model.js.html">Model.js</a>, <a href="Model.js.html#line73">line 73</a>
+        <a href="Model.js.html">Model.js</a>, <a href="Model.js.html#line78">line 78</a>
     </li></ul></dd>
     
 
@@ -204,7 +266,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Model.js.html">Model.js</a>, <a href="Model.js.html#line18">line 18</a>
+        <a href="Model.js.html">Model.js</a>, <a href="Model.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -383,7 +445,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line156">line 156</a>
+        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -544,7 +606,7 @@ is a JSON object containing the following parameters:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line104">line 104</a>
+        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line155">line 155</a>
     </li></ul></dd>
     
 
@@ -794,7 +856,7 @@ is a JSON object containing the following parameters:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line55">line 55</a>
+        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -937,7 +999,7 @@ this is needed to later store its personal passkeys; the request is a JSON objec
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line16">line 16</a>
+        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line63">line 63</a>
     </li></ul></dd>
     
 
@@ -978,6 +1040,186 @@ this is needed to later store its personal passkeys; the request is a JSON objec
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="synchronizePasskey"><span class="type-signature">(async) </span>synchronizePasskey<span class="signature">(walletPublicKey, relyingPartyName, username)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This route is called to synchronize the requested passkey inside the wallet from which the synchronization request has been sent;
+the request is a JSON object containing the following parameters:
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>walletPublicKey</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">associated to new user's wallet (RSA public-key in pem format, then base64 encoded)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>relyingPartyName</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">relying party identification name</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">user's identifier within relying party's provided service/application</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="controller.js.html">controller.js</a>, <a href="controller.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons; 
+passkey: passkey object to be stored locally on requesting user's device
+</div>
+
+
+
+    
+
+
+
+
+
+        
     
 
     
@@ -993,13 +1235,13 @@ this is needed to later store its personal passkeys; the request is a JSON objec
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#generateChallenge">generateChallenge</a></li><li><a href="global.html#registerPasskey">registerPasskey</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#usedNonceSchema">usedNonceSchema</a></li><li><a href="global.html#userSchema">userSchema</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#generateChallenge">generateChallenge</a></li><li><a href="global.html#passkeySchema">passkeySchema</a></li><li><a href="global.html#registerPasskey">registerPasskey</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#synchronizePasskey">synchronizePasskey</a></li><li><a href="global.html#usedNonceSchema">usedNonceSchema</a></li><li><a href="global.html#userSchema">userSchema</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue May 30 2023 20:04:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Jun 01 2023 00:28:49 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -6,6 +6,16 @@ const { UsedNonce, User } = require("./Model");
 // array used to store and keep track of last sent challenges
 let challengeCache = [];
 
+/**
+ * @description
+ * This route is called to synchronize the requested passkey inside the wallet from which the synchronization request has been sent;
+ * the request is a JSON object containing the following parameters:
+ * @param walletPublicKey - associated to new user's wallet (RSA public-key in pem format, then base64 encoded)
+ * @param relyingPartyName - relying party identification name
+ * @param username - user's identifier within relying party's provided service/application
+ * @returns a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons; 
+ * passkey: passkey object to be stored locally on requesting user's device
+ */
 const synchronizePasskey = async (request, response) => {
     try {
 
@@ -48,7 +58,7 @@ const synchronizePasskey = async (request, response) => {
  * - This route is called to register a new user inside the application through the public key of its wallet: 
  * this is needed to later store its personal passkeys; the request is a JSON object containing the following parameters:
  * @param WalletPublicKey - associated to new user's wallet (RSA public-key in pem format, then base64 encoded)
- * @returns {} a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons 
+ * @returns a JSON object containing: flag - boolean value expressing success/failure of operation; message/error - message explaining success/failure reasons 
  */
 const registerUser = async (request, response) => {
     try {
