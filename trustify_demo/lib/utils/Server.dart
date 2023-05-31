@@ -1,11 +1,62 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-const apiBaseUrl = "http://192.168.116.124:3001/api";
-const authenticateUrl = "/authenticate";
-const registerUrl = "/register";
+//MUST CHANGE THIS
+const apiBaseUrl = "http://192.168.1.6:3001/api";
 
-Future<bool> register(Map<String, String> requestBody) async {
+const authenticateUrl = "/authenticate";
+const registerUrl = "/registerpasskey";
+const newUserUrl = "/newuser";
+const synchronizeUrl = "/synchronizepasskey";
+
+Future<Map<String, dynamic>?> synchronizePasskey(
+    Map<String, String> queryParameters) async {
+  try {
+    final synchronize = Uri.parse(apiBaseUrl + synchronizeUrl)
+        .replace(queryParameters: queryParameters);
+
+    var response = await http.get(synchronize);
+    if (response.statusCode == 200) {
+      // Successful response
+      final responseBody = jsonDecode(response.body);
+      // Process the response data
+      if (responseBody['flag']) {
+        return responseBody['passkey'];
+      }
+    } else {
+      // Error handling
+      return null;
+    }
+  } catch (error) {
+    // Exception handling
+    return null;
+  }
+  return null;
+}
+
+Future<bool> newUser(Map<String, String> requestBody) async {
+  try {
+    final createUser = Uri.parse(apiBaseUrl + newUserUrl);
+    var response = await http.post(createUser, body: requestBody);
+    if (response.statusCode == 200) {
+      // Successful response
+      final responseBody = jsonDecode(response.body);
+      // Process the response data
+      if (responseBody['flag']) {
+        return true;
+      }
+    } else {
+      // Error handling
+      return false;
+    }
+  } catch (error) {
+    // Exception handling
+    return false;
+  }
+  return false;
+}
+
+Future<bool> registerPasskey(Map<String, String> requestBody) async {
   try {
     final register = Uri.parse(apiBaseUrl + registerUrl);
     var response = await http.post(register, body: requestBody);

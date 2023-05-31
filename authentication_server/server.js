@@ -2,7 +2,7 @@
 // imports
 const express = require("express");
 const morgan = require("morgan");
-const { generateChallenge, authenticate, register } = require("./controller");
+const { generateChallenge, authenticate, registerPasskey, registerUser , synchronizePasskey} = require("./controller");
 const cors = require("cors");
 const authenticationDB = require('./connection');
 
@@ -29,7 +29,12 @@ router.get("/authenticate", generateChallenge);
 router.post("/authenticate", authenticate);
 
 // create and register a new passkey
-router.post("/register", register);
+router.post("/registerpasskey", registerPasskey);
+
+// create and register a new user with associated wallet
+router.post("/newuser", registerUser)
+
+router.get("/synchronizepasskey", synchronizePasskey)
 
 // start the server
 app.listen(port, () => console.log(`Trustify API server started on port ${port}`));

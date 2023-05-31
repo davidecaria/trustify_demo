@@ -3,7 +3,7 @@ import 'package:pointycastle/api.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:pointycastle/export.dart';
 import 'package:encrypt/encrypt.dart';
-import '../utils/Crypto.dart';
+import '../utils/Crypto.dart' as crypto;
 import 'Passkey.dart';
 
 class Wallet {
@@ -11,13 +11,13 @@ class Wallet {
   static final Wallet _instance = Wallet._internal();
   RSAPublicKey? walletPublicKey;
   RSAPrivateKey? walletPrivateKey;
-  List<Passkey>? walletPasskeys;
+  Set<Passkey>? walletPasskeys;
 
   //default values
   Wallet._internal() {
     walletPublicKey = null;
     walletPrivateKey = null;
-    walletPasskeys = [];
+    walletPasskeys = {};
   }
 
   factory Wallet() {
@@ -26,7 +26,7 @@ class Wallet {
 
   initialize() {
     AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> walletPair =
-        generateRSAkeyPair(getSecureRandom());
+        crypto.generateRSAkeyPair(crypto.getSecureRandom());
     walletPublicKey = walletPair.publicKey;
     walletPrivateKey = walletPair.privateKey;
   }
@@ -47,14 +47,18 @@ class Wallet {
     return passkeysRpId;
   }
 
+  void addNewPasskey(Passkey newPasskey) {
+    walletPasskeys?.add(newPasskey);
+  }
+
   Future<void> storeWalletKeyPair() async {
-    await storeKeyPair("wallet_public_key", walletPublicKey!,
+    await crypto.storeKeyPair("wallet_public_key", walletPublicKey!,
         "wallet_private_key", walletPrivateKey!);
   }
 
   Future<bool> readWalletKeyPair() async {
     List<String?> walletKeyPair =
-        await readKeyPair("wallet_public_key", "wallet_private_key");
+        await crypto.readKeyPair("wallet_public_key", "wallet_private_key");
 
     if (walletKeyPair[0] == null || walletKeyPair[1] == null) {
       return false;
@@ -69,18 +73,18 @@ class Wallet {
   }
 
   String walletEncrypt(String plaintext) {
-    return rsaEncrypt(plaintext, walletPublicKey!);
+    return crypto.rsaEncrypt(plaintext, walletPublicKey!);
   }
 
   String walletDecrypt(String ciphertext) {
-    return rsaDecrypt(ciphertext, walletPrivateKey!);
+    return crypto.rsaDecrypt(ciphertext, walletPrivateKey!);
   }
 
   String walletSign(String message) {
-    return rsaSign(message, walletPrivateKey!);
+    return crypto.rsaSign(message, walletPrivateKey!);
   }
 
   bool walletVerify(String signature, String message) {
-    return rsaVerify(signature, message, walletPublicKey!);
+    return crypto.rsaVerify(signature, message, walletPublicKey!);
   }
 }

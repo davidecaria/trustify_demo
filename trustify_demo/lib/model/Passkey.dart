@@ -5,8 +5,9 @@ import 'package:local_auth/local_auth.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:trustify_demo/model/Wallet.dart';
-import '../utils/Crypto.dart';
+import '../utils/Crypto.dart' as crypto;
 import '../utils/Server.dart' as server;
+import '../demoData/demoPasskey.dart' as demo;
 
 const apiBaseUrl = "http://192.168.1.6:3001";
 const authenticateUrl = "/api/authenticate";
@@ -58,6 +59,13 @@ class Passkey {
     displayName = '';
     relyingPartyName = '';
     relyingPartyId = '';
+    pubKeyCredParams =
+        '[{"alg": -7, "type": "public-key"},{"alg": -257, "type": "public-key"}]';
+    requireResidentKey = true;
+    authenticatorAttachment = 'platform';
+    this.excludeCredentialsId = '';
+    this.excludeCredentialsType = 'public-key';
+    this.excludeCredentialsTransports = '["internal"]';
   }
 
   Passkey({
@@ -86,7 +94,7 @@ class Passkey {
   //set end-to-end key -> it will be used to retrieve the key and send to new device via bluetooth
   Future<void> readEndToEndKey(String passkeyId) async {
     final endToEndKeyId = "${passkeyId}_e2e";
-    final endToEndKeyString = await readKeyValue(endToEndKeyId);
+    final endToEndKeyString = await crypto.readKeyValue(endToEndKeyId);
     endToEndKey = Uint8List.fromList(utf8.encode(endToEndKeyString!));
   }
 
@@ -96,7 +104,7 @@ class Passkey {
     final passkeyPrivateKeyId = "${passkeyId}_private";
 
     List<String?> passkeyKeyPair =
-        await readKeyPair(passkeyPublicKeyId, passkeyPrivateKeyId);
+        await crypto.readKeyPair(passkeyPublicKeyId, passkeyPrivateKeyId);
 
     if (passkeyKeyPair[0] == null || passkeyKeyPair[1] == null) {
       return false;
@@ -111,8 +119,8 @@ class Passkey {
 
   Future<bool> retrievePasskey(String relyingPartyId) async {
     try {
-      final passkeyId = await readKeyValue(relyingPartyId);
-      final credentialOption = await readKeyValue(passkeyId!);
+      final passkeyId = await crypto.readKeyValue(relyingPartyId);
+      final credentialOption = await crypto.readKeyValue(passkeyId!);
       final Map<String, dynamic> jsonCredentialOption =
           json.decode(credentialOption!);
 
@@ -175,66 +183,70 @@ class Passkey {
 
   Future<bool> createCredential() async {
     try {
-      /*
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
-        localizedReason: 'Confirm to register a passkey for $relyingPartyName', // Reason shown to the user
+        localizedReason:
+            'Confirm to register a passkey for $relyingPartyId', // Reason shown to the user
       );
-      */
 
-      if (true) {
+      if (isAuthenticated) {
         try {
           //if a passkey exists, just populate the calling istance without registering a new one
           final bool passkeyExists = await retrievePasskey(relyingPartyId);
+
           if (passkeyExists) {
             return false;
           }
 
           //navigator.credentials.create() uses publicKeyCredentialCreationOptions to create the key pair in standard webauthn
           AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> passkeyPair =
-              generateRSAkeyPair(getSecureRandom());
+              crypto.generateRSAkeyPair(crypto.getSecureRandom());
           passkeyPublicKey = passkeyPair.publicKey;
           passkeyPrivateKey = passkeyPair.privateKey;
 
           //creating end-to-end key -> AES-256
-          endToEndKey = generateAesKey(32);
+          endToEndKey = crypto.generateAesKey(32);
 
           // creating passkey identifier
-          passkeyId = getCredentialId();
+          passkeyId = getNewCredentialId();
           final credentialCreationOption = getCredentialCreationOption();
 
-          // storing passkeyId under Relying party identifier for greater ease of use
-          await storeKeyValue(relyingPartyId, passkeyId);
+          // storing passkeyId under Relying party identifier for ease of use
+          await crypto.storeKeyValue(relyingPartyId, passkeyId);
 
           // storing credentialCreationOption under a new generated passkey Identifier
-          await storeKeyValue(passkeyId, credentialCreationOption);
+          await crypto.storeKeyValue(passkeyId, credentialCreationOption);
 
           //storing end-to-end key
           final endToEndKeyId = "${passkeyId}_e2e";
-          await storeKeyValue(
-              endToEndKeyId, encodeCryptoMaterial(endToEndKey!));
+          await crypto.storeKeyValue(
+              endToEndKeyId, crypto.encodeCryptoMaterial(endToEndKey!));
 
           // storing key-pair
           final passkeyPublicKeyId = "${passkeyId}_public";
           final passkeyPrivateKeyId = "${passkeyId}_private";
-          await storeKeyPair(passkeyPublicKeyId, passkeyPublicKey!,
+          await crypto.storeKeyPair(passkeyPublicKeyId, passkeyPublicKey!,
               passkeyPrivateKeyId, passkeyPrivateKey!);
 
           // passkeys material must be sent server-side at this point
-          passkeyIV = generateAesIV();
-          final pemPrivateKey = encodePrivateKeyInPem(passkeyPrivateKey!);
+          passkeyIV = crypto.generateAesIV();
+          final pemPrivateKey =
+              crypto.encodePrivateKeyInPem(passkeyPrivateKey!);
           final passkeySecretKey =
               Uint8List.fromList(utf8.encode(pemPrivateKey));
-          //must be sent to server
-          final encryptedSecretKeyE2E = encodeCryptoMaterial(
-              aesCbcEncrypt(endToEndKey!, passkeyIV, passkeySecretKey));
 
-          final b64PemPublicKey = encodeCryptoMaterial(Uint8List.fromList(
-              encodePublicKeyInPem(passkeyPublicKey!).codeUnits));
+          //must be sent to server
+          final b64encryptedPemSecretKeyE2E = crypto.encodeCryptoMaterial(
+              crypto.aesCbcEncrypt(endToEndKey!, passkeyIV, passkeySecretKey));
+
+          final b64PemPublicKey = crypto.encodeCryptoMaterial(
+              Uint8List.fromList(
+                  crypto.encodePublicKeyInPem(passkeyPublicKey!).codeUnits));
           final passkeySignature =
               applicationWallet.walletSign(credentialCreationOption);
-          final b64PemWalletPublicKey = encodeCryptoMaterial(Uint8List.fromList(
-              encodePublicKeyInPem(applicationWallet.walletPublicKey!)
+          final b64PemWalletPublicKey = crypto.encodeCryptoMaterial(
+              Uint8List.fromList(crypto
+                  .encodePublicKeyInPem(applicationWallet.walletPublicKey!)
                   .codeUnits));
 
           final requestBody = {
@@ -243,11 +255,11 @@ class Passkey {
             "relyingPartyName": relyingPartyName,
             "username": username,
             "passkeyPublicKey": b64PemPublicKey,
-            "passkeySecretKeyE2E": encryptedSecretKeyE2E,
+            "passkeySecretKeyE2E": b64encryptedPemSecretKeyE2E,
             "passkeySignature": passkeySignature
           };
 
-          final isPasskeyStored = await server.register(requestBody);
+          final isPasskeyStored = await server.registerPasskey(requestBody);
 
           if (isPasskeyStored) {
             return true;
@@ -268,26 +280,107 @@ class Passkey {
     }
   }
 
-  String getCredentialId() {
-    return getUuid();
+  String getNewCredentialId() {
+    return crypto.getUuid();
   }
 
-  Future<bool> authenticate() async {
+  Future<bool> synchronize(String relyingPartyName, String username) async {
     try {
-      /*
       final LocalAuthentication localAuth = LocalAuthentication();
       bool isAuthenticated = await localAuth.authenticate(
         localizedReason:
-            'Confirm to authenticate as $username to $relyingPartyName', // Reason shown to the user
+            'Confirm to synchronize your passkey with username: $username, service: $relyingPartyName inside this wallet', // Reason shown to the user
       );
-      */
-      const isAuthenticated = true;
 
       if (isAuthenticated) {
         // Fingerprint authentication succeeded
         // Proceed with the protected operation
-        final b64PemWalletPublicKey = encodeCryptoMaterial(Uint8List.fromList(
-            encodePublicKeyInPem(applicationWallet.walletPublicKey!)
+
+        final b64PemWalletPublicKey = crypto.encodeCryptoMaterial(
+            Uint8List.fromList(crypto
+                .encodePublicKeyInPem(applicationWallet.walletPublicKey!)
+                .codeUnits));
+
+        final queryParameters = {
+          "walletPublicKey": b64PemWalletPublicKey,
+          "relyingPartyName": relyingPartyName,
+          "username": username
+        };
+
+        final passkeyParameters =
+            await server.synchronizePasskey(queryParameters);
+
+        if (passkeyParameters == null) {
+          throw Error();
+        }
+
+        final relyingPartyId = passkeyParameters["relyingPartyId"];
+        final b64PemPublicKey = passkeyParameters["passkeyPublicKey"];
+        final b64encryptedPemSecretKeyE2E =
+            passkeyParameters["passkeySecretKeyE2E"];
+
+        //decode passkey public-key into an RSAPublicKey object
+        final pemPublicKey = crypto.decodeCryptoMaterial(b64PemPublicKey!);
+        final publicKey = RSAKeyParser()
+            .parse(String.fromCharCodes(pemPublicKey)) as RSAPublicKey;
+
+        //decrypt and decode the retrieved passkey secret-key into an RSAPrivateKey object
+        final encryptedSecretKeyE2E =
+            crypto.decodeCryptoMaterial(b64encryptedPemSecretKeyE2E!);
+
+        //DEMO: end-to-end key and IV used are hardcoded assuming them to be received via bluetooth
+        final pemSecretKey = crypto.aesCbcDecrypt(
+            crypto.decodeCryptoMaterial(demo.demoKeyE2E),
+            crypto.decodeCryptoMaterial(demo.demoIV),
+            encryptedSecretKeyE2E);
+        final privateKey = RSAKeyParser()
+            .parse(String.fromCharCodes(pemSecretKey)) as RSAPrivateKey;
+
+        //setting new values
+        this.relyingPartyName = relyingPartyName;
+        this.relyingPartyId = relyingPartyId!;
+        this.username = username;
+        this.passkeyPublicKey = publicKey;
+        this.passkeyPrivateKey = privateKey;
+
+        //saving locally the passkey under a new identifier
+        this.passkeyId = getNewCredentialId();
+
+        // storing passkeyId under Relying party identifier for ease of use
+        await crypto.storeKeyValue(this.relyingPartyId, this.passkeyId);
+
+        // storing new synchronized key-pair
+        final passkeyPublicKeyId = "${this.passkeyId}_public";
+        final passkeyPrivateKeyId = "${this.passkeyId}_private";
+        await crypto.storeKeyPair(passkeyPublicKeyId, passkeyPublicKey!,
+            passkeyPrivateKeyId, passkeyPrivateKey!);
+
+        return true;
+      } else {
+        // Fingerprint authentication failed or was canceled
+        // Handle accordingly
+        return false;
+      }
+    } catch (e) {
+      // Handle any exceptions that occurred
+      return false;
+    }
+  }
+
+  Future<bool> authenticate() async {
+    try {
+      final LocalAuthentication localAuth = LocalAuthentication();
+      bool isAuthenticated = await localAuth.authenticate(
+        localizedReason:
+            'Confirm to authenticate as $username to $relyingPartyId', // Reason shown to the user
+      );
+
+      if (isAuthenticated) {
+        // Fingerprint authentication succeeded
+        // Proceed with the protected operation
+        final b64PemWalletPublicKey = crypto.encodeCryptoMaterial(
+            Uint8List.fromList(crypto
+                .encodePublicKeyInPem(applicationWallet.walletPublicKey!)
                 .codeUnits));
 
         final queryParameters = {
@@ -296,7 +389,7 @@ class Passkey {
         };
 
         final challenge = await server.getChallenge(queryParameters);
-        final signedChallenge = rsaSign(challenge!, passkeyPrivateKey!);
+        final signedChallenge = crypto.rsaSign(challenge!, passkeyPrivateKey!);
 
         final requestBody = {
           "walletPublicKey": b64PemWalletPublicKey,
@@ -313,7 +406,7 @@ class Passkey {
         return false;
       }
     } catch (e) {
-      // Handle any exceptions that occurred during authentication
+      // Handle any exceptions that occurred
       return false;
     }
   }

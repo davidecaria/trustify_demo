@@ -3,13 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:trustify_demo/widgets/HomePage.dart';
 
+import '../demoData/demoPasskey.dart';
+import '../model/Passkey.dart';
+
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
   @override
   _LoginFormState createState() => _LoginFormState();
-
-  }
+}
 
 class _LoginFormState extends State<LoginForm> {
   final LocalAuthentication _localAuthentication = LocalAuthentication();
@@ -18,8 +20,7 @@ class _LoginFormState extends State<LoginForm> {
   Future<bool> _authenticate() async {
     try {
       return await _localAuthentication.authenticate(
-        localizedReason: 'Please authenticate to login'
-      );
+          localizedReason: 'Please authenticate to access your Wallet');
     } on PlatformException catch (e) {
       print('Error authenticating: $e');
       return false;
@@ -67,7 +68,15 @@ class _LoginFormState extends State<LoginForm> {
                   ElevatedButton(
                     onPressed: () async {
                       bool authenticated = await _authenticate();
+
                       if (authenticated) {
+                        //create or retrieve demo passkey data
+                        await testPasskey1.createCredential();
+                        applicationWallet.addNewPasskey(testPasskey1);
+
+                        await testPasskey2.createCredential();
+                        applicationWallet.addNewPasskey(testPasskey2);
+
                         // Handle successful login
                         Navigator.push(
                           context,

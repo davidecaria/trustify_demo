@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trustify_demo/model/Wallet.dart';
 import 'package:trustify_demo/demoData/demoPasskey.dart';
-
+import '../model/Passkey.dart';
 import 'InspectPasskey.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,27 +11,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Wallet applicationWallet = Wallet();
-  List<String> passkeysRPsName = [];
+  List<String> passkeysRPsId = [];
   bool isLongPressActive = false;
   List<bool> selectedPasskeys = [];
+  List<Passkey?> passkeysList = [];
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    var isCreated = await testPasskey1.createCredential();
-    if (isCreated) {
-      applicationWallet.walletPasskeys?.add(testPasskey1);
-    }
 
-    isCreated = await testPasskey2.createCredential();
-    if (isCreated) {
-      applicationWallet.walletPasskeys?.add(testPasskey2);
-    }
-    //TEST
-    applicationWallet.setPasskeys(testPasskeysList);
-    passkeysRPsName = applicationWallet.getPasskeysRpId();
+    passkeysList = applicationWallet.walletPasskeys!.toList();
+    passkeysRPsId = applicationWallet.getPasskeysRpId();
     selectedPasskeys =
-        List<bool>.generate(passkeysRPsName.length, (index) => false);
+        List<bool>.generate(passkeysRPsId.length, (index) => false);
   }
 
   @override
@@ -41,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text(
           'Trustify Wallet Demo',
           style: TextStyle(
-            color: Colors.blueAccent,
+            color: Colors.purple,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
@@ -54,8 +46,8 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.blueAccent.shade400,
-              Colors.blueAccent.shade700,
+              Colors.purple.shade400,
+              Colors.purple.shade700,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -79,14 +71,118 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
+                      color: Colors.purple,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16.0),
+                  Align(
+                      alignment: Alignment.center,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              String usernameInput =
+                                  ""; // Variable to store user input
+                              String relyingPartyNameInput = "";
+                              return AlertDialog(
+                                title: const Text('Synchronize a Passkey'),
+                                content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                        'Provide your credential information to synchronize your Passkey with this Wallet'),
+                                    const SizedBox(height: 8.0),
+                                    TextField(
+                                      onChanged: (value) {
+                                        relyingPartyNameInput =
+                                            value; // Update the user input variable
+                                      },
+                                      decoration: const InputDecoration(
+                                        hintText: 'Service name',
+                                      ),
+                                    ),
+                                    TextField(
+                                      onChanged: (value) {
+                                        usernameInput =
+                                            value; // Update the user input variable
+                                      },
+                                      decoration: const InputDecoration(
+                                        hintText: 'Username',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    child: const Text('Close'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      if (usernameInput == "" ||
+                                          relyingPartyNameInput == "") {
+                                        const snackBar = SnackBar(
+                                          content: Text("Empty parameters"),
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      } else {
+                                        //Passkey synchronization process
+                                        Passkey synchronizedPasskey =
+                                            Passkey.empty();
+
+                                        final isSynchronized =
+                                            await synchronizedPasskey
+                                                .synchronize(
+                                                    relyingPartyNameInput,
+                                                    usernameInput);
+
+                                        if (isSynchronized) {
+                                          setState(() {
+                                            applicationWallet.addNewPasskey(
+                                                synchronizedPasskey);
+
+                                            passkeysList = applicationWallet
+                                                .walletPasskeys!
+                                                .toList();
+                                            passkeysRPsId = applicationWallet
+                                                .getPasskeysRpId();
+                                            selectedPasskeys =
+                                                List<bool>.generate(
+                                                    passkeysRPsId.length,
+                                                    (index) => false);
+                                          });
+                                        } else {
+                                          const snackBar = SnackBar(
+                                            content:
+                                                Text("Synchronization failed"),
+                                          );
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                        }
+
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                      }
+                                    },
+                                    child: const Text('Confirm'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: const Text('Synchronize a Passkey'),
+                      )),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: passkeysRPsName.length,
+                      itemCount: passkeysRPsId.length,
                       itemBuilder: (context, index) {
                         return InkWell(
                           onLongPress: () {
@@ -99,8 +195,7 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => InspectPasskey(
-                                  thisPasskey:
-                                      applicationWallet.walletPasskeys![index],
+                                  thisPasskey: passkeysList[index]!,
                                 ),
                               ),
                             );
@@ -113,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 16.0),
                                   child: Text(
-                                    passkeysRPsName[index],
+                                    passkeysRPsId[index],
                                     style: const TextStyle(fontSize: 18.0),
                                   ),
                                 ),
