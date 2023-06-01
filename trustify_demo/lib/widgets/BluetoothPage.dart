@@ -84,7 +84,6 @@ class _BluetoothPageState extends State<BluetoothPage> {
                           title: const Text('Enable Bluetooth'),
                           value: _bluetoothController.bluetoothState.isEnabled,
                           onChanged: (bool value) async {
-                            // Do the request and update with the true value then
                             if (value) {
                               await FlutterBluetoothSerial.instance
                                   .requestEnable();
@@ -92,6 +91,9 @@ class _BluetoothPageState extends State<BluetoothPage> {
                               await FlutterBluetoothSerial.instance
                                   .requestDisable();
                             }
+
+                            // Wait for the Bluetooth state to update before calling setState
+                            await Future.delayed(Duration(milliseconds: 500));
                             setState(() {});
                           },
                         ),
