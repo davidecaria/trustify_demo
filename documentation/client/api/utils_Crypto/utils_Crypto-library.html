@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="Crypto library API docs, for the Dart programming language.">
+  <title>Crypto library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">trustify_demo</a></li>
+    <li class="self-crumb">Crypto library</li>
+  </ol>
+  <div class="self-name">Crypto</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+    
+      <div>
+<h1><span class="kind-library">Crypto</span> library 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>This utility file provides a set of Cryptographical and secure storage related functionalities used mainly by <a href="../model_Wallet/Wallet-class.html">Wallet</a> and <a href="../model_Passkey/Passkey-class.html">Passkey</a> Classes</p>
+</section>
+
+
+
+
+
+
+
+    <section class="summary offset-anchor" id="functions">
+      <h2>Functions</h2>
+
+      <dl class="callables">
+        <dt id="aesCbcDecrypt" class="callable">
+  <span class="name"><a href="../utils_Crypto/aesCbcDecrypt.html">aesCbcDecrypt</a></span><span class="signature">(<wbr><span class="parameter" id="aesCbcDecrypt-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">key</span>, </span><span class="parameter" id="aesCbcDecrypt-param-iv"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">iv</span>, </span><span class="parameter" id="aesCbcDecrypt-param-ciphertext"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">ciphertext</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="aesCbcEncrypt" class="callable">
+  <span class="name"><a href="../utils_Crypto/aesCbcEncrypt.html">aesCbcEncrypt</a></span><span class="signature">(<wbr><span class="parameter" id="aesCbcEncrypt-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">key</span>, </span><span class="parameter" id="aesCbcEncrypt-param-iv"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">iv</span>, </span><span class="parameter" id="aesCbcEncrypt-param-plaintext"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">plaintext</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="decodeCryptoMaterial" class="callable">
+  <span class="name"><a href="../utils_Crypto/decodeCryptoMaterial.html">decodeCryptoMaterial</a></span><span class="signature">(<wbr><span class="parameter" id="decodeCryptoMaterial-param-encodedCrypto"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">encodedCrypto</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="encodeCryptoMaterial" class="callable">
+  <span class="name"><a href="../utils_Crypto/encodeCryptoMaterial.html">encodeCryptoMaterial</a></span><span class="signature">(<wbr><span class="parameter" id="encodeCryptoMaterial-param-crypto"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">crypto</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="encodePrivateKeyInPem" class="callable">
+  <span class="name"><a href="../utils_Crypto/encodePrivateKeyInPem.html">encodePrivateKeyInPem</a></span><span class="signature">(<wbr><span class="parameter" id="encodePrivateKeyInPem-param-key"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPrivateKey-class.html">RSAPrivateKey</a></span> <span class="parameter-name">key</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="encodePublicKeyInPem" class="callable">
+  <span class="name"><a href="../utils_Crypto/encodePublicKeyInPem.html">encodePublicKeyInPem</a></span><span class="signature">(<wbr><span class="parameter" id="encodePublicKeyInPem-param-key"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPublicKey-class.html">RSAPublicKey</a></span> <span class="parameter-name">key</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="generateAesIV" class="callable">
+  <span class="name"><a href="../utils_Crypto/generateAesIV.html">generateAesIV</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="generateAesKey" class="callable">
+  <span class="name"><a href="../utils_Crypto/generateAesKey.html">generateAesKey</a></span><span class="signature">(<wbr><span class="parameter" id="generateAesKey-param-keyLength"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">keyLength</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-typed_data/Uint8List-class.html">Uint8List</a>?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="generateRSAkeyPair" class="callable">
+  <span class="name"><a href="../utils_Crypto/generateRSAkeyPair.html">generateRSAkeyPair</a></span><span class="signature">(<wbr><span class="parameter" id="generateRSAkeyPair-param-secureRandom"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api/SecureRandom-class.html">SecureRandom</a></span> <span class="parameter-name">secureRandom</span>, </span><span class="parameter" id="generateRSAkeyPair-param-bitLength">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">bitLength</span> = <span class="default-value">2048</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/pointycastle/3.7.3/api/AsymmetricKeyPair-class.html">AsymmetricKeyPair</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPublicKey-class.html">RSAPublicKey</a></span>, <span class="type-parameter"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPrivateKey-class.html">RSAPrivateKey</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getSecureRandom" class="callable">
+  <span class="name"><a href="../utils_Crypto/getSecureRandom.html">getSecureRandom</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/pointycastle/3.7.3/api/SecureRandom-class.html">SecureRandom</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getUuid" class="callable">
+  <span class="name"><a href="../utils_Crypto/getUuid.html">getUuid</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="readKeyPair" class="callable">
+  <span class="name"><a href="../utils_Crypto/readKeyPair.html">readKeyPair</a></span><span class="signature">(<wbr><span class="parameter" id="readKeyPair-param-publicId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">publicId</span>, </span><span class="parameter" id="readKeyPair-param-privateId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">privateId</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="readKeyValue" class="callable">
+  <span class="name"><a href="../utils_Crypto/readKeyValue.html">readKeyValue</a></span><span class="signature">(<wbr><span class="parameter" id="readKeyValue-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">key</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="rsaDecrypt" class="callable">
+  <span class="name"><a href="../utils_Crypto/rsaDecrypt.html">rsaDecrypt</a></span><span class="signature">(<wbr><span class="parameter" id="rsaDecrypt-param-ciphertext"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">ciphertext</span>, </span><span class="parameter" id="rsaDecrypt-param-privateKey"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPrivateKey-class.html">RSAPrivateKey</a></span> <span class="parameter-name">privateKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="rsaEncrypt" class="callable">
+  <span class="name"><a href="../utils_Crypto/rsaEncrypt.html">rsaEncrypt</a></span><span class="signature">(<wbr><span class="parameter" id="rsaEncrypt-param-plaintext"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">plaintext</span>, </span><span class="parameter" id="rsaEncrypt-param-publicKey"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPublicKey-class.html">RSAPublicKey</a></span> <span class="parameter-name">publicKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="rsaSign" class="callable">
+  <span class="name"><a href="../utils_Crypto/rsaSign.html">rsaSign</a></span><span class="signature">(<wbr><span class="parameter" id="rsaSign-param-message"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="rsaSign-param-privateKey"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPrivateKey-class.html">RSAPrivateKey</a></span> <span class="parameter-name">privateKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="rsaVerify" class="callable">
+  <span class="name"><a href="../utils_Crypto/rsaVerify.html">rsaVerify</a></span><span class="signature">(<wbr><span class="parameter" id="rsaVerify-param-signature"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">signature</span>, </span><span class="parameter" id="rsaVerify-param-message"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="rsaVerify-param-publicKey"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPublicKey-class.html">RSAPublicKey</a></span> <span class="parameter-name">publicKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="storeKeyPair" class="callable">
+  <span class="name"><a href="../utils_Crypto/storeKeyPair.html">storeKeyPair</a></span><span class="signature">(<wbr><span class="parameter" id="storeKeyPair-param-publicId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">publicId</span>, </span><span class="parameter" id="storeKeyPair-param-publicKey"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPublicKey-class.html">RSAPublicKey</a></span> <span class="parameter-name">publicKey</span>, </span><span class="parameter" id="storeKeyPair-param-privateId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">privateId</span>, </span><span class="parameter" id="storeKeyPair-param-privateKey"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPrivateKey-class.html">RSAPrivateKey</a></span> <span class="parameter-name">privateKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="storeKeyValue" class="callable">
+  <span class="name"><a href="../utils_Crypto/storeKeyValue.html">storeKeyValue</a></span><span class="signature">(<wbr><span class="parameter" id="storeKeyValue-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">key</span>, </span><span class="parameter" id="storeKeyValue-param-value"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">value</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">trustify_demo</a></li>
+  <li class="self-crumb">Crypto library</li>
+</ol>
+
+
+    <h5><span class="package-name">trustify_demo</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../controllers_bluetooth_controller/controllers_bluetooth_controller-library.html">bluetooth_controller</a></li>
+      <li><a href="../widgets_BluetoothDeviceListEntry/widgets_BluetoothDeviceListEntry-library.html">BluetoothDeviceListEntry</a></li>
+      <li><a href="../widgets_BluetoothPage/widgets_BluetoothPage-library.html">BluetoothPage</a></li>
+      <li><a href="../utils_Crypto/utils_Crypto-library.html">Crypto</a></li>
+      <li><a href="../demoData_demoPasskey/demoData_demoPasskey-library.html">demoPasskey</a></li>
+      <li><a href="../widgets_HomePage/widgets_HomePage-library.html">HomePage</a></li>
+      <li><a href="../widgets_InspectPasskey/widgets_InspectPasskey-library.html">InspectPasskey</a></li>
+      <li><a href="../widgets_Login/widgets_Login-library.html">Login</a></li>
+      <li><a href="../main/main-library.html">main</a></li>
+      <li><a href="../model_Passkey/model_Passkey-library.html">Passkey</a></li>
+      <li><a href="../widgets_SelectBondedDevicePage/widgets_SelectBondedDevicePage-library.html">SelectBondedDevicePage</a></li>
+      <li><a href="../utils_Server/utils_Server-library.html">Server</a></li>
+      <li><a href="../model_Wallet/model_Wallet-library.html">Wallet</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>Crypto library</h5>
+    <ol>
+
+
+
+
+
+      <li class="section-title"><a href="../utils_Crypto/utils_Crypto-library.html#functions">Functions</a></li>
+        <li><a href="../utils_Crypto/aesCbcDecrypt.html">aesCbcDecrypt</a></li>
+        <li><a href="../utils_Crypto/aesCbcEncrypt.html">aesCbcEncrypt</a></li>
+        <li><a href="../utils_Crypto/decodeCryptoMaterial.html">decodeCryptoMaterial</a></li>
+        <li><a href="../utils_Crypto/encodeCryptoMaterial.html">encodeCryptoMaterial</a></li>
+        <li><a href="../utils_Crypto/encodePrivateKeyInPem.html">encodePrivateKeyInPem</a></li>
+        <li><a href="../utils_Crypto/encodePublicKeyInPem.html">encodePublicKeyInPem</a></li>
+        <li><a href="../utils_Crypto/generateAesIV.html">generateAesIV</a></li>
+        <li><a href="../utils_Crypto/generateAesKey.html">generateAesKey</a></li>
+        <li><a href="../utils_Crypto/generateRSAkeyPair.html">generateRSAkeyPair</a></li>
+        <li><a href="../utils_Crypto/getSecureRandom.html">getSecureRandom</a></li>
+        <li><a href="../utils_Crypto/getUuid.html">getUuid</a></li>
+        <li><a href="../utils_Crypto/readKeyPair.html">readKeyPair</a></li>
+        <li><a href="../utils_Crypto/readKeyValue.html">readKeyValue</a></li>
+        <li><a href="../utils_Crypto/rsaDecrypt.html">rsaDecrypt</a></li>
+        <li><a href="../utils_Crypto/rsaEncrypt.html">rsaEncrypt</a></li>
+        <li><a href="../utils_Crypto/rsaSign.html">rsaSign</a></li>
+        <li><a href="../utils_Crypto/rsaVerify.html">rsaVerify</a></li>
+        <li><a href="../utils_Crypto/storeKeyPair.html">storeKeyPair</a></li>
+        <li><a href="../utils_Crypto/storeKeyValue.html">storeKeyValue</a></li>
+
+
+
+</ol>
+
+  </div><!--/sidebar-offcanvas-right-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    trustify_demo
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

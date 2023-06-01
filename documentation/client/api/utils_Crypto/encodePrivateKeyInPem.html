@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the encodePrivateKeyInPem function from the Crypto library, for the Dart programming language.">
+  <title>encodePrivateKeyInPem function - Crypto library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">trustify_demo</a></li>
+    <li><a href="../utils_Crypto/utils_Crypto-library.html">Crypto</a></li>
+    <li class="self-crumb">encodePrivateKeyInPem function</li>
+  </ol>
+  <div class="self-name">encodePrivateKeyInPem</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-function">encodePrivateKeyInPem</span> function 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+<span class="name ">encodePrivateKeyInPem</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="encodePrivateKeyInPem-param-key"><span class="type-annotation"><a href="https://pub.dev/documentation/pointycastle/3.7.3/api.asymmetric/RSAPrivateKey-class.html">RSAPrivateKey</a></span> <span class="parameter-name">key</span></span></li>
+</ol>)
+
+        
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">String encodePrivateKeyInPem(RSAPrivateKey key) {
+  final asn = ASN1Sequence();
+
+  asn.add(ASN1Integer(BigInt.zero)); &#47;&#47; version
+  asn.add(ASN1Integer(key.n)); &#47;&#47; modulus
+  asn.add(ASN1Integer(key.exponent)); &#47;&#47; public exponent
+  asn.add(ASN1Integer(key.privateExponent));
+  asn.add(ASN1Integer(key.p));
+  asn.add(ASN1Integer(key.q));
+  asn.add(ASN1Integer(key.privateExponent! % (key.p! - BigInt.one))); &#47;&#47; exp1
+  asn.add(ASN1Integer(key.privateExponent! % (key.q! - BigInt.one))); &#47;&#47; exp2
+  asn.add(ASN1Integer(key.q?.modInverse(key.p!))); &#47;&#47; coefficient
+
+  final base64Data = base64.encode(asn.encode());
+  return &#39;-----BEGIN RSA PRIVATE KEY-----\n$base64Data\n-----END RSA PRIVATE KEY-----&#39;;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">trustify_demo</a></li>
+  <li><a href="../utils_Crypto/utils_Crypto-library.html">Crypto</a></li>
+  <li class="self-crumb">encodePrivateKeyInPem function</li>
+</ol>
+
+
+    <h5>Crypto library</h5>
+    <ol>
+
+
+
+
+
+      <li class="section-title"><a href="../utils_Crypto/utils_Crypto-library.html#functions">Functions</a></li>
+        <li><a href="../utils_Crypto/aesCbcDecrypt.html">aesCbcDecrypt</a></li>
+        <li><a href="../utils_Crypto/aesCbcEncrypt.html">aesCbcEncrypt</a></li>
+        <li><a href="../utils_Crypto/decodeCryptoMaterial.html">decodeCryptoMaterial</a></li>
+        <li><a href="../utils_Crypto/encodeCryptoMaterial.html">encodeCryptoMaterial</a></li>
+        <li><a href="../utils_Crypto/encodePrivateKeyInPem.html">encodePrivateKeyInPem</a></li>
+        <li><a href="../utils_Crypto/encodePublicKeyInPem.html">encodePublicKeyInPem</a></li>
+        <li><a href="../utils_Crypto/generateAesIV.html">generateAesIV</a></li>
+        <li><a href="../utils_Crypto/generateAesKey.html">generateAesKey</a></li>
+        <li><a href="../utils_Crypto/generateRSAkeyPair.html">generateRSAkeyPair</a></li>
+        <li><a href="../utils_Crypto/getSecureRandom.html">getSecureRandom</a></li>
+        <li><a href="../utils_Crypto/getUuid.html">getUuid</a></li>
+        <li><a href="../utils_Crypto/readKeyPair.html">readKeyPair</a></li>
+        <li><a href="../utils_Crypto/readKeyValue.html">readKeyValue</a></li>
+        <li><a href="../utils_Crypto/rsaDecrypt.html">rsaDecrypt</a></li>
+        <li><a href="../utils_Crypto/rsaEncrypt.html">rsaEncrypt</a></li>
+        <li><a href="../utils_Crypto/rsaSign.html">rsaSign</a></li>
+        <li><a href="../utils_Crypto/rsaVerify.html">rsaVerify</a></li>
+        <li><a href="../utils_Crypto/storeKeyPair.html">storeKeyPair</a></li>
+        <li><a href="../utils_Crypto/storeKeyValue.html">storeKeyValue</a></li>
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    trustify_demo
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
