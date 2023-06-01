@@ -15,7 +15,7 @@ class BluetoothController {
   /// A list of available devices.
   List<dynamic> devices = List<DeviceWithAvailability>.empty(growable: true);
 
-  // Listens to the stream of BluetoothDiscoveryResults returned by the startDiscovery()
+  /// Listens to the stream of BluetoothDiscoveryResults returned by the startDiscovery()
   StreamSubscription<BluetoothDiscoveryResult>? discoveryStreamSubscription;
 
   /// A variable tracking whether the controller is currently discovering devices. Initially set to false
