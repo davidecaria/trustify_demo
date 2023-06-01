@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trustify_demo/model/Passkey.dart';
+import './BluetoothPage.dart';
 
 class InspectPasskey extends StatefulWidget {
   final Passkey thisPasskey;
@@ -112,6 +113,12 @@ class _InspectPasskeyState extends State<InspectPasskey> {
                       ElevatedButton(
                         onPressed: () async {
                           // Handle button 2 press
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                // TODO: pass the E2E key reference and retrive later
+                                builder: (context) => BluetoothPage()),
+                          );
                         },
                         child: const Text('Transfer'),
                       ),

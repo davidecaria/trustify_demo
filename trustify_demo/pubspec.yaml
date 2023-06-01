@@ -42,6 +42,7 @@ dependencies:
   uuid: ^3.0.7
   json_annotation: ^4.8.1
   http: ^0.13.6
+  flutter_bluetooth_serial: ^0.4.0
 
 
 dev_dependencies:
