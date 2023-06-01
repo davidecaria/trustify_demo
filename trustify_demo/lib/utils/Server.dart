@@ -1,14 +1,20 @@
+/// This utility file provides a set of methods used to communicate with server and call endpoints to trigger specific functionalities server-side
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-//MUST CHANGE THIS
-const apiBaseUrl = "http://192.168.1.6:3001/api";
+//must change this
+const apiBaseUrl = "http://MustChangeThis:3001/api";
 
 const authenticateUrl = "/authenticate";
 const registerUrl = "/registerpasskey";
 const newUserUrl = "/newuser";
 const synchronizeUrl = "/synchronizepasskey";
 
+/// This method allows to call the [synchronizeUrl] endpoint and communicate with the Authentication Server in order to retrieve and locally store
+/// a server-side stored [Passkey] by providing the related [Passkey] information information through [queryParameters] object
+///
+/// Returns a [JSON] object representing the [Passkey] object stored server-side
 Future<Map<String, dynamic>?> synchronizePasskey(
     Map<String, String> queryParameters) async {
   try {
@@ -34,6 +40,10 @@ Future<Map<String, dynamic>?> synchronizePasskey(
   return null;
 }
 
+/// This method allows to call the [newUserUrl] endpoint and communicate with the Authentication Server in order to register a new User server-side by providing
+/// the corresponding information through [requestBody] object
+///
+/// Returns a [bool] value expressing success/failure of the operation
 Future<bool> newUser(Map<String, String> requestBody) async {
   try {
     final createUser = Uri.parse(apiBaseUrl + newUserUrl);
@@ -56,6 +66,10 @@ Future<bool> newUser(Map<String, String> requestBody) async {
   return false;
 }
 
+/// This method allows to call the [registerUrl] endpoint and communicate with the Authentication Server in order to register a new [Passkey] server-side by providing
+/// the corresponding information through [requestBody] object
+///
+/// Returns a [bool] value expressing success/failure of the operation
 Future<bool> registerPasskey(Map<String, String> requestBody) async {
   try {
     final register = Uri.parse(apiBaseUrl + registerUrl);
@@ -78,6 +92,10 @@ Future<bool> registerPasskey(Map<String, String> requestBody) async {
   return false;
 }
 
+/// This method allows to call the [authenticateUrl] endpoint and communicate with the Authentication Server in order to request the initiation of
+/// a new asymmetric challenge in order to authenticate the calling User to a specific Relying Party by providing necessary information through [queryParameters] object
+///
+/// Returns [responseBody] challenge parameter which is a random nonce to be signed in order to prove authentication
 Future<String?> getChallenge(Map<String, String> queryParameters) async {
   try {
     final getChallenge = Uri.parse(apiBaseUrl + authenticateUrl)
@@ -102,6 +120,11 @@ Future<String?> getChallenge(Map<String, String> queryParameters) async {
   return null;
 }
 
+/// This method allows to call the [authenticateUrl] endpoint and communicate with the Authentication Server in order to validate User provided response to the
+/// previously received asymmetric authentication challenge by sending to the server the [requestBody] object containing in particular the signature computed over the
+/// challenge itself
+///
+/// Returns a [bool] value expressing success/failure of the operation
 Future<bool> authenticate(Map<String, String> requestBody) async {
   try {
     final authenticate = Uri.parse(apiBaseUrl + authenticateUrl);

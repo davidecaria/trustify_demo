@@ -1,4 +1,4 @@
-//creation of demo data
+/// This file contains a set of objects used to perform test and show demo functionalities
 import '../model/Passkey.dart';
 
 Passkey testPasskey1 = Passkey(

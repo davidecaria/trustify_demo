@@ -251,7 +251,7 @@ const authenticate = async (request, response) => {
         const currentDate = moment();
         const secondsDifference = moment.duration(currentDate.diff(authenticationMaterial.validity, 'seconds'));
       
-        if (secondsDifference > 30) {
+        if (secondsDifference > 180) {
             await authenticationMaterial.deleteOne({ challenge: challenge });
             return response.status(401).json({ flag: false, error: "Challenge expired" });
         }
@@ -286,6 +286,7 @@ const authenticate = async (request, response) => {
 
         return response.status(200).json({ flag: true, message: "Authentication succeeded" });
     } catch (error) {
+        console.log(error);
         await authenticationMaterial.deleteOne({ challenge: challenge });
         return response.status(400).json({ flag: false, error: error });
     }
