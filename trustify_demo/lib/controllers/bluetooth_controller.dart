@@ -1,20 +1,27 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
+/// A controller for managing Bluetooth state and device discovery.
 class BluetoothController {
+  /// The current state of the Bluetooth adapter. Initially set to UNKNOWN
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
 
+  /// A callback function that is called when the Bluetooth state changes.
   Function? onBluetoothStateChanged;
 
+  /// Returns the current state of the Bluetooth adapter.
   BluetoothState get bluetoothState => _bluetoothState;
 
+  /// A list of available devices.
   List<dynamic> devices = List<DeviceWithAvailability>.empty(growable: true);
 
-  // Availability
+  // Listens to the stream of BluetoothDiscoveryResults returned by the startDiscovery()
   StreamSubscription<BluetoothDiscoveryResult>? discoveryStreamSubscription;
+
+  /// A variable tracking whether the controller is currently discovering devices. Initially set to false
   bool isDiscovering = false;
 
+  /// Initializes the controller and sets up listeners for Bluetooth state changes.
   void initState() {
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -24,6 +31,7 @@ class BluetoothController {
       }
     });
 
+    // Repeatedly check if the Bluetooth adapter is enabled
     Future.doWhile(() async {
       // Wait if adapter not enabled
       if ((await FlutterBluetoothSerial.instance.isEnabled) ?? false) {
@@ -46,10 +54,13 @@ class BluetoothController {
     });
   }
 
+  /// Disposes of the controller and any active listeners.
   void dispose() {
-    // FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
+    // Remove any listeners set up in initState()
+    FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
   }
 
+  /// Starts discovering available devices.
   void startDiscovery() {
     discoveryStreamSubscription =
         FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
@@ -71,11 +82,15 @@ class BluetoothController {
     });
   }
 
+  /// Restarts the discovery process.
   void restartDiscovery() {
     isDiscovering = true;
     startDiscovery();
   }
 
+  /// Sets up the list of bonded devices.
+  ///
+  /// If [checkAvailability] is `true`, the availability of each device will be checked.
   void setupBondedDevicesList(bool checkAvailability) {
     isDiscovering = checkAvailability;
     if (isDiscovering) {
@@ -98,16 +113,24 @@ class BluetoothController {
   }
 }
 
+/// An enumeration of device availability states.
 enum DeviceAvailability {
   no,
   maybe,
   yes,
 }
 
+/// A class representing a Bluetooth device with availability information.
 class DeviceWithAvailability {
+  /// The Bluetooth device.
   BluetoothDevice device;
+
+  /// The availability of the device.
   DeviceAvailability availability;
+
+  /// The received signal strength indicator (RSSI) of the device, if available.
   int? rssi;
 
+  /// Creates a new [DeviceWithAvailability] with the given [device], [availability], and [rssi].
   DeviceWithAvailability(this.device, this.availability, [this.rssi]);
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
+/// A list tile that displays information about a Bluetooth device.
 class BluetoothDeviceListEntry extends ListTile {
+  /// Creates a new [BluetoothDeviceListEntry] with the given [device], [rssi], [onTap], [onLongPress], and [enabled] state.
   BluetoothDeviceListEntry({
     required BluetoothDevice device,
     int? rssi,
