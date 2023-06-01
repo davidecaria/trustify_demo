@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 //MUST CHANGE THIS
-const apiBaseUrl = "http://192.168.1.6:3001/api";
+const apiBaseUrl = "http://192.168.60.124:3001/api";
 
 const authenticateUrl = "/authenticate";
 const registerUrl = "/registerpasskey";

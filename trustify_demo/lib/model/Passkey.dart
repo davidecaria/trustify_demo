@@ -9,7 +9,8 @@ import '../utils/Crypto.dart' as crypto;
 import '../utils/Server.dart' as server;
 import '../demoData/demoPasskey.dart' as demo;
 
-const apiBaseUrl = "http://192.168.1.6:3001";
+///CHANGE THIS
+const apiBaseUrl = "http://192.168.60.124:3001";
 const authenticateUrl = "/api/authenticate";
 const registerUrl = "/api/register";
 
