@@ -3,11 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:trustify_demo/utils/Crypto.dart';
 import 'package:trustify_demo/utils/Server.dart' as server;
-import 'package:trustify_demo/widgets/HomePage.dart';
 import 'package:trustify_demo/widgets/Login.dart';
 import 'package:trustify_demo/demoData/demoPasskey.dart' as demo;
 
-import 'demoData/demoPasskey.dart';
 import 'model/Wallet.dart';
 
 void main() async {

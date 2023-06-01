@@ -1,3 +1,5 @@
+/// This utility file provides a set of Cryptographical and secure storage related functionalities used mainly by [Wallet] and [Passkey] Classes
+
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -5,6 +7,8 @@ import 'package:pointycastle/asn1/primitives/asn1_integer.dart';
 import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/src/platform_check/platform_check.dart';
 import "package:pointycastle/export.dart";
+import 'package:trustify_demo/model/Passkey.dart';
+import 'package:trustify_demo/model/Wallet.dart';
 import 'package:uuid/uuid.dart';
 import 'package:pointycastle/paddings/pkcs7.dart';
 
@@ -31,14 +35,14 @@ AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
 }
 
 SecureRandom getSecureRandom() {
-
   final secureRandom = SecureRandom('Fortuna')
-    ..seed(KeyParameter(
-        Platform.instance.platformEntropySource().getBytes(32)));
+    ..seed(
+        KeyParameter(Platform.instance.platformEntropySource().getBytes(32)));
   return secureRandom;
 }
 
-Future<void> storeKeyPair(String publicId, RSAPublicKey publicKey, String privateId, RSAPrivateKey privateKey) async {
+Future<void> storeKeyPair(String publicId, RSAPublicKey publicKey,
+    String privateId, RSAPrivateKey privateKey) async {
   const storage = FlutterSecureStorage();
 
   final pemPublicKey = encodePublicKeyInPem(publicKey);
@@ -67,20 +71,21 @@ String rsaDecrypt(String ciphertext, RSAPrivateKey privateKey) {
 String rsaSign(String message, RSAPrivateKey privateKey) {
   var signer = RSASigner(SHA256Digest(), '0609608648016503040201')
     ..init(true, PrivateKeyParameter<RSAPrivateKey>(privateKey));
-  final signed = signer.generateSignature(Uint8List.fromList(message.codeUnits));
+  final signed =
+      signer.generateSignature(Uint8List.fromList(message.codeUnits));
 
   return base64.encode(signed.bytes);
 }
 
 bool rsaVerify(String signature, String message, RSAPublicKey publicKey) {
-
   final decodedSignature = base64.decode(signature);
-  
+
   final sig = RSASignature(decodedSignature);
 
   final verifier = RSASigner(SHA256Digest(), '0609608648016503040201');
 
-  verifier.init(false, PublicKeyParameter<RSAPublicKey>(publicKey)); // false=verify
+  verifier.init(
+      false, PublicKeyParameter<RSAPublicKey>(publicKey)); // false=verify
 
   try {
     return verifier.verifySignature(Uint8List.fromList(message.codeUnits), sig);
@@ -155,10 +160,9 @@ Future<String?> readKeyValue(String key) async {
   return value;
 }
 
-
 Uint8List? generateAesKey(int keyLength) {
   //wrong key length
-  if(!(keyLength == 16 || keyLength == 24 || keyLength == 32)) {
+  if (!(keyLength == 16 || keyLength == 24 || keyLength == 32)) {
     return null;
   }
 
