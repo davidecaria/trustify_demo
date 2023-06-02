@@ -20,5 +20,26 @@ The Demo consists in two essential modules:
     - Authentication validation
     - registration of a new wallet
 
-### Licenses
+### Demo flow
 
+The Demo will perform the following operations, in this order:
+
+1. Ask user permission (fingeprint) to create a new `Wallet` istance with:
+    - a new public-private key-pair
+    - an empty set of passkeys
+2. Ask user permission (fingerprint) to register two demo passkeys inside the Wallet (`demoData/demoPasskey.dart`)
+3. Show available passkeys list:
+    - each can be inspected and used to perform authentication
+4. Locally synchronize the wallet with a Passkey only available server-side:
+
+- bluetooth transmission is not yet implemented at this point
+    in this use case we assume the following:
+  - server-side passkey to be already transmitted from the original wallet to the actual considered user's one
+  - e2e key to be already transmitted from the original device to the actually considered one
+- the aforementioned assumptions are considered in particular for the live Demo demonstration purpose, in order to define a reasonable level of trade-off between what is implemented and actually shown without mocking features or, on the other hand, presenting trivial functionalities
+
+### Future Developments
+
+The Demo, as already said, presents a set of reduced functionalities and is far from being a mature and ready-to-deployment application; next developments will regard definition of a one-user to many-wallets schema, and the design of a clever relationship between those entities
+
+### Licenses
