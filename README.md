@@ -20,7 +20,14 @@ The Demo consists in two essential modules:
     - Authentication validation
     - registration of a new wallet
 
-### Demo flow
+### Considerations
+The Demo is meant only to present a possible implementation of our design work, it provides only a few set of functionalities; in particular:
+- it shows the process of creation and storage of passkeys
+- it shows how a passkey stored only in the server-side wallet can be retrieved and synchronized inside the local wallet
+- allows to perform authentication request validation and response
+- it shows the message exchanged bewteen client and server in the various operations
+
+### Licenses
 
 The Demo will perform the following operations, in this order:
 

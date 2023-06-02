@@ -4,12 +4,15 @@ import '../controllers/bluetooth_controller.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import './BluetoothDeviceListEntry.dart';
 
+/// A page for selecting a bonded Bluetooth device.
 class SelectBondedDevicePage extends StatefulWidget {
-  /// If true, on page start there is performed discovery upon the bonded devices.
-  /// Then, if they are not avaliable, they would be disabled from the selection.
+  /// Whether to check the availability of each bonded device.
   final bool checkAvailability;
+
+  /// The [BluetoothController] used to manage Bluetooth state and device discovery.
   final BluetoothController bluetoothController;
 
+  /// Creates a new [SelectBondedDevicePage] with the given [bluetoothController] and [checkAvailability].
   const SelectBondedDevicePage(
       {required this.bluetoothController, this.checkAvailability = true});
 
@@ -17,14 +20,20 @@ class SelectBondedDevicePage extends StatefulWidget {
   _SelectBondedDevicePage createState() => _SelectBondedDevicePage();
 }
 
+/// The state for a [SelectBondedDevicePage].
 class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
   @override
   void initState() {
     super.initState();
+    // Set up a callback function to be called when the Bluetooth state changes
     widget.bluetoothController.onBluetoothStateChanged = () => setState(() {});
+    // Set up the list of bonded devices
     setupBondedDevicesList(widget.checkAvailability);
   }
 
+  /// Sets up the list of bonded devices.
+  ///
+  /// If [checkAvailability] is `true`, the availability of each device will be checked.
   void setupBondedDevicesList(bool checkAvailability) {
     widget.bluetoothController.isDiscovering = checkAvailability;
     if (widget.bluetoothController.isDiscovering) {
@@ -57,7 +66,6 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
 
   @override
   Widget build(BuildContext context) {
-// the code you provided me just now
     List<BluetoothDeviceListEntry> list = widget.bluetoothController.devices
         .map((_device) => BluetoothDeviceListEntry(
               device: _device.device,
