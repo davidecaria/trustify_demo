@@ -27,7 +27,7 @@ The Demo is meant only to present a possible implementation of our design work, 
 - allows to perform authentication request validation and response
 - it shows the message exchanged bewteen client and server in the various operations
 
-### Licenses
+### Demo flow
 
 The Demo will perform the following operations, in this order:
 
