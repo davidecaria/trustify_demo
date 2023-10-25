@@ -128,7 +128,7 @@ considering only the main features, those are:
         - wallet public material
     - device identification (leveraging wallet key-pair to perform asymmetric challenge-response authentication)
         
-        ![                                                       Client Application Overview](Ultimate%20report%20f5fbb748f2e34282b9091fcecfd8c865/Untitled.png)
+        ![                                                       Client Application Overview](./mockups.png)
         
                                                                Client Application Overview
         
