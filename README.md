@@ -38,7 +38,7 @@ As reported on the FIDO alliance website: The FIDO protocols use standard public
 
 2.2.2. **A simple use case**
 
-As it is briefly described by [FIDO Alliance](https://fidoalliance.org/how-fido-works/) and reported below, the authentication process, from the key-pair creation to the actual auhtentication granting, is characterized by the following activities:  
+As it is briefly described by [FIDO Alliance](https://fidoalliance.org/how-fido-works/) and reported below, the authentication process, from the key-pair creation to the actual authentication granting, is characterized by the following activities:  
 
 1. **Registration:**
     - User is prompted to choose an available FIDO authenticator that matches the online service’s acceptance policy.
@@ -74,7 +74,7 @@ The proposed architecture is a passwordless authentication design that allows th
 
 The fundamental components mentioned earlier served as the foundational elements in shaping our architectural proposal. Our primary focus was to craft an adaptable authentication system, allowing for Passkey recovery and seamless interoperability across diverse devices. While established players like Apple and Microsoft have made strides in implementing FIDO technology, their offerings lack the crucial aspect of cross-vendor interoperability. 
 
-This realization pushed us to create a vendor-agnostic solution, designed to be plug-and-play for any service seeking for a security beyond conventional passwords. At the core of our architecture lies the concept of the Wallet data structure, enabling the utilization, recovery, and transition of Passkeys. Functioning as a dedicated software repository for keys, the Wallet serves as the primary interface for end-users. It incorporates a PK/SK key pair, crucial for device identification if necessitated by the service the user aims to access.
+This realization pushed us to create a vendor-agnostic solution, designed to be plug-and-play for any service seeking for security beyond conventional passwords. At the core of our architecture lies the concept of the Wallet data structure, enabling the utilization, recovery, and transition of Passkeys. Functioning as a dedicated software repository for keys, the Wallet serves as the primary interface for end-users. It incorporates a PK/SK key pair, crucial for device identification if necessitated by the service the user aims to access.
 
 **2.4.1. Wallet data structure**
 
@@ -84,7 +84,7 @@ The Wallet has the crucial role of securely housing the End-to-End (EtE) encrypt
 
 ### 2.5. Proof of concept of our design
 
-In this section, we analyze the synchronization and Passkey recovery mechanisms using a detailed example that describes the entire process. During the synchronization phase all the components are involved and the potential of the architecture is exposed. We imagined a straightforward scenario where a user needs to authenticate with a service that requires a Passkey, but the selected device hasn't been provisioned with the key for access. 
+In this section, we analyze the synchronization and Passkey recovery mechanisms using a detailed example that describes the entire process. During the synchronization phase, all the components are involved and the potential of the architecture is exposed. We imagined a straightforward scenario where a user needs to authenticate with a service that requires a Passkey, but the selected device hasn't been provisioned with the key for access. 
 
 **Notation:**
 
@@ -98,7 +98,7 @@ We consider the following assumptions:
 1. DevA was previously used to generate a Passkey which is stored both inside WA and the Passkey backend of the service.
 2. DevB tries to perform authentication with the same service for which a valid Passkey exists, even if stored in another device.
 
-![passkey_wallet_overview.png](Ultimate%20report%20f5fbb748f2e34282b9091fcecfd8c865/passkey_wallet_overview.png)
+![passkey_wallet_overview.png](./passkey_wallet_overview.png)
 
 Steps in details:
 
